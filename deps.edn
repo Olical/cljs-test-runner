@@ -1,7 +1,9 @@
 {:deps
  {org.clojure/clojure {:mvn/version "1.9.0"}
-  org.clojure/clojurescript {:mvn/version "1.10.64"}}
+  org.clojure/clojurescript {:git/url "git@github.com:clojure/clojurescript.git"
+                             :sha "8971829275b466280a0b8fc85886e3fa7d353a13"}}
 
  :aliases
  {:test
-  {:main-opts ["-m" "cljs-test-runner.main"]}}}
+  {:extra-paths ["test"]
+   :main-opts ["-m" "cljs.main" "-re" "node" "-m" "cljs-test-runner.main"]}}}
