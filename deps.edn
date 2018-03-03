@@ -4,6 +4,13 @@
                              :sha "8971829275b466280a0b8fc85886e3fa7d353a13"}}
 
  :aliases
- {:test
+ {:nrepl
+  {:extra-paths ["dev"]
+   :extra-deps
+   {com.cemerick/piggieback {:mvn/version "0.2.2"}
+    org.clojure/tools.nrepl {:mvn/version "0.2.12"}
+    cider/cider-nrepl {:mvn/version "0.17.0-SNAPSHOT"}}
+   :main-opts ["-m" "cljs-test-runner.nrepl"]}
+  :test
   {:extra-paths ["test"]
    :main-opts ["-m" "cljs.main" "-re" "node" "-m" "cljs-test-runner.main"]}}}
