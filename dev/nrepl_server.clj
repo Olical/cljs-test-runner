@@ -1,7 +1,7 @@
 (ns nrepl-server
   (:require [cider-nrepl.main :as nrepl]
-            [cemerick.piggieback :as pback]))
+            [cemerick.piggieback]))
 
 (defn -main []
-  (cider-nrepl.main/init ["cider.nrepl/cider-middleware"
-                          "cemerick.piggieback/wrap-cljs-repl"]))
+  (nrepl/init ["cider.nrepl/cider-middleware"
+               "cemerick.piggieback/wrap-cljs-repl"]))

@@ -1,6 +1,6 @@
 (ns user
-  (:require [cemerick.piggieback :as pback]
-            [cljs.repl.node :as node]))
+  (:require [cemerick.piggieback :as piggieback]
+            [cljs.repl.node :as node-repl]))
 
 (defn cljs-repl []
-  (pback/cljs-repl (node/repl-env)))
+  (piggieback/cljs-repl (node-repl/repl-env)))
