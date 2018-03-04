@@ -1,4 +1,4 @@
-(ns cljs-test-runner.nrepl
+(ns nrepl-server
   (:require [cider-nrepl.main :as nrepl]
             [cemerick.piggieback :as pback]))
 

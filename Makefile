@@ -1,7 +1,7 @@
-.PHONY: nrepl test
+.PHONY: nrepl-server test
 
 test:
 	clj -Atest
 
-nrepl:
-	clj -Anrepl
+nrepl-server:
+	clj -Anrepl-server
