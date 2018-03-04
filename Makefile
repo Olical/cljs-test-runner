@@ -1,7 +1,7 @@
 .PHONY: nrepl-server test
 
 test:
-	clojure -Atest
+	clojure -A:dev:test
 
 nrepl-server:
-	clojure -Anrepl-server
+	clojure -A:dev:nrepl-server

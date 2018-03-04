@@ -1,15 +1,18 @@
 {:deps
- {org.clojure/clojure {:mvn/version "1.9.0"}
-  org.clojure/clojurescript {:git/url "git@github.com:clojure/clojurescript.git"
-                             :sha "8971829275b466280a0b8fc85886e3fa7d353a13"}}
+ {org.clojure/tools.namespace {:mvn/version "0.3.0-alpha1"}
+  cljs-node-io {:mvn/version "0.5.0"}}
 
  :aliases
- {:nrepl-server
+ {:dev
   {:extra-paths ["dev"]
    :extra-deps
-   {com.cemerick/piggieback {:mvn/version "0.2.2"}
+   {org.clojure/clojure {:mvn/version "1.9.0"}
+    org.clojure/clojurescript {:git/url "git@github.com:clojure/clojurescript.git"
+                               :sha "8971829275b466280a0b8fc85886e3fa7d353a13"}
     org.clojure/tools.nrepl {:mvn/version "0.2.12"}
-    cider/cider-nrepl {:mvn/version "0.17.0-SNAPSHOT"}}
-   :main-opts ["-m" "nrepl-server"]}
+    com.cemerick/piggieback {:mvn/version "0.2.2"}
+    cider/cider-nrepl {:mvn/version "0.17.0-SNAPSHOT"}}}
+  :nrepl-server
+  {:main-opts ["-m" "nrepl-server"]}
   :test
   {:main-opts ["-m" "cljs.main" "-re" "node" "-m" "cljs-test-runner.main"]}}}
