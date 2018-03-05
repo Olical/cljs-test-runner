@@ -1,5 +1,6 @@
 {:deps
- {org.clojure/tools.namespace {:mvn/version "0.3.0-alpha1"}
+ {org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
+  org.clojure/tools.reader {:mvn/version "1.2.1"}
   cljs-node-io {:mvn/version "0.5.0"}}
 
  :aliases
