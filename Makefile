@@ -1,4 +1,7 @@
-.PHONY: test
+.PHONY: test-node test-browser
 
-test:
-	clojure -Atest
+test-node:
+	clojure -Atest -re node
+
+test-browser:
+	clojure -Atest -re browser

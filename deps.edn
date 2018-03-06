@@ -2,4 +2,4 @@
         org.clojure/clojurescript {:mvn/version "1.10.126"}
         org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}}
  :aliases {:test {:extra-paths ["test"]
-                  :main-opts ["-m" "cljs-test-runner.main" "-re" "node"]}}}
+                  :main-opts ["-m" "cljs-test-runner.main"]}}}
