@@ -7,7 +7,7 @@
 
 (defn render-test-src [nses]
   (str "(ns test.runner
-  (:require " (str/join " " nses) "))
+  (:require cljs.test " (str/join " " nses) "))
 (enable-console-print!)
 (cljs.test/run-tests " (str/join " " (map #(str "'" %) nses))")"))
 
