@@ -2,8 +2,9 @@
         org.clojure/clojurescript {:mvn/version "1.10.126"}
         org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}}
 
- :aliases {:nrepl-server {:extra-paths ["dev"]
+ :aliases {:nrepl-server {:extra-paths ["test" "dev"]
                           :extra-deps {org.clojure/tools.nrepl {:mvn/version "0.2.12"}
                                        cider/cider-nrepl {:mvn/version "0.17.0-SNAPSHOT"}}
                           :main-opts ["-m" "nrepl-server"]}
-           :test {:main-opts ["-m" "cljs-test-runner.main"]}}}
+           :test {:extra-paths ["test"]
+                  :main-opts ["-m" "cljs-test-runner.main"]}}}
