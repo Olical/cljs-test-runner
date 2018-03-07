@@ -1,3 +1,4 @@
 .cpcache/
-.nrepl-port
+target/
 cljs-test-runner-out/
+.nrepl-port
