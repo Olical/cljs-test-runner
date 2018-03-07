@@ -5,8 +5,6 @@
             [cljs.build.api :as cljs]
             [doo.core :as doo]))
 
-;; TODO Add CLI parsing with a default --env of node.
-
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses]
@@ -14,11 +12,17 @@
         quoted-nses-str (str/join " " (map #(str "'" %) nses))]
     (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ") ) (doo-tests " quoted-nses-str ")")))
 
+(defn test-namespace?
+  "Checks if a namespace symbol is a test namespace (ends with -test) or not."
+  [ns-name]
+  (str/ends-with? ns-name "-test"))
+
 (defn -main
   "Creates a ClojureScript test runner and executes it with node."
   [& args]
   (let [test-runner-cljs (-> (io/file "test")
                              (find/find-namespaces-in-dir find/cljs)
+                             (->> (filter test-namespace?))
                              (render-test-runner-cljs))
         exit-code (atom 1)
         src-path "test/runner.cljs"
