@@ -3,4 +3,4 @@
 
 (t/deftest should-run
   (t/testing "this should run"
-    (t/is (= 1 1))))
+    (t/is (= 2 1))))
