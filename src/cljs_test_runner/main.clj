@@ -5,6 +5,8 @@
             [cljs.build.api :as cljs]
             [doo.core :as doo]))
 
+;; TODO Add CLI parsing with a default --env of node.
+
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses]
@@ -21,16 +23,16 @@
         exit-code (atom 1)
         src-path "test/runner.cljs"
         out-dir "cljs-test-runner-out"
-        out-path (str out-dir "/test-runner.js")]
+        out-path (str/join "/" [out-dir "test-runner.js"])]
     (spit src-path test-runner-cljs)
     (try
       (let [doo-opts {}
             compiler-opts {:output-to out-path
                            :output-dir out-dir
                            :main 'test.runner
-                           :target :nodejs}]
+                           :target :nodejs}] ;; browser
         (cljs/build "test" compiler-opts)
-        (let [{:keys [exit]} (doo/run-script :node compiler-opts doo-opts)]
+        (let [{:keys [exit]} (doo/run-script :node compiler-opts doo-opts)] ;; phantom
           (reset! exit-code exit)))
       (catch Error e
         (println e))

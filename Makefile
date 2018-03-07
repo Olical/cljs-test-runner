@@ -1,7 +1,10 @@
 .PHONY: test deploy
 
-test:
+test-node:
 	clojure -Atest
+
+test-phantom:
+	clojure -Atest --env phantom
 
 deploy:
 	clj -Spom
