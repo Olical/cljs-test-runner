@@ -14,7 +14,7 @@ You're going to want to add the dependency and a call to the `cljs-test-runner.m
 {:deps {org.clojure/clojure {:mvn/version "1.9.0"}
         org.clojure/clojurescript {:mvn/version "1.10.126"}}
  :aliases {:test {:extra-paths ["test"]
-                  :extra-deps {olical/cljs-test-runner {:mvn/version "1.0.0"}}
+                  :extra-deps {olical/cljs-test-runner {:mvn/version "0.1.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 
