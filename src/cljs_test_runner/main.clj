@@ -2,6 +2,7 @@
   (:require [clojure.tools.namespace.find :as find]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.tools.cli :as cli]
             [cljs.build.api :as cljs]
             [doo.core :as doo]))
 
@@ -17,30 +18,70 @@
   [ns-name]
   (str/ends-with? ns-name "-test"))
 
-(defn -main
-  "Creates a ClojureScript test runner and executes it with node."
-  [& args]
-  (let [test-runner-cljs (-> (io/file "test")
+(defn exit
+  "Exit the program cleanly."
+  ([status]
+   (exit status nil))
+  ([status msg]
+   (when msg
+     (println msg))
+   (System/exit status)))
+
+(defn error-msg
+  "Render an error message."
+  [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (str/join \newline errors)))
+
+(defn test-cljs-namespaces-in-dir
+  "Execute all ClojureScript tests in a directory."
+  [{:keys [env src out]}]
+  (let [test-runner-cljs (-> (io/file src)
                              (find/find-namespaces-in-dir find/cljs)
                              (->> (filter test-namespace?))
                              (render-test-runner-cljs))
         exit-code (atom 1)
-        src-path "test/runner.cljs"
-        out-dir "cljs-test-runner-out"
-        out-path (str/join "/" [out-dir "test-runner.js"])]
+        src-path (str/join "/" [src "runner.cljs"])
+        out-path (str/join "/" [out "test-runner.js"])
+        {:keys [target doo-env]} (case env
+                                   :node {:target :nodejs
+                                          :doo-env :node}
+                                   :phantom {:target :browser
+                                             :doo-env :phantom})]
     (spit src-path test-runner-cljs)
     (try
       (let [doo-opts {}
             compiler-opts {:output-to out-path
-                           :output-dir out-dir
+                           :output-dir out
+                           :target target
                            :main 'test.runner
-                           :target :nodejs}] ;; browser
-        (cljs/build "test" compiler-opts)
-        (let [{:keys [exit]} (doo/run-script :node compiler-opts doo-opts)] ;; phantom
+                           :optimizations :none}]
+        (cljs/build src compiler-opts)
+        (let [{:keys [exit]} (doo/run-script doo-env compiler-opts doo-opts)]
           (reset! exit-code exit)))
       (catch Error e
         (println e))
       (finally
         (io/delete-file src-path)
-        (System/exit @exit-code)))))
+        (exit @exit-code)))))
+
+(def cli-options
+  [["-e" "--env ENV" "Run your tests in either node or phantom"
+    :default :node
+    :default-desc "node"
+    :parse-fn keyword]
+   ["-s" "--src PATH" "The directory containing your test files"
+    :default "./test"]
+   ["-o" "--out PATH" "The output directory for compiled test code"
+    :default "./cljs-test-runner-out"]
+   ["-h" "--help"]])
+
+(defn -main
+  "Creates a ClojureScript test runner and executes it with node."
+  [& args]
+  (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]
+    (cond
+      (:help options) (exit 0 summary)
+      errors (exit 1 (error-msg errors))
+      :else (test-cljs-namespaces-in-dir options))))
 

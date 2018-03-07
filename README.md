@@ -4,17 +4,17 @@ Run all of your [ClojureScript][] tests with one simple command.
 
 Inspired by Cognitect's [test-runner][] for [Clojure][], it is designed to be used in conjunction with the Clojure CLI tool and a `deps.edn` file.
 
-Under the hood it's building a test runner file, compiling everything into the `cljs-test-runner-out` directory and then executing the compiled tests with [doo][]. Discovery of namespaces is automatic, it assumes your tests are located in the `test` directory.
+Under the hood it's building a test runner file, compiling everything and then executing the compiled tests with [doo][]. Discovery of test namespaces is automatic, so no configuration is required.
 
 ## Usage
 
-In simple cases, you'll be able to execute your tests with something as simple as the following single line.
+In simple cases, you'll be able to execute your tests with something as succinct as the following line.
 
-```
+```bash
 $ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "0.1.0-SNAPSHOT"}}}' -m cljs-test-runner.main
 ```
 
-It's likely that your tests will require dependencies and configuration that would be unwieldy in a single long line of a shell script. You will need to add the dependency and `-m` (`--main`) parameter to your `deps.edn` file.
+It's likely that your tests will require dependencies and configuration that would become unwieldy in this format. You will need to add the dependency and `--main` (`-m`) parameter to your `deps.edn` file.
 
 I recommend you put this under an alias such as `test` or `cljs-test` if that's already taken by your Clojure tests.
 
@@ -25,9 +25,9 @@ I recommend you put this under an alias such as `test` or `cljs-test` if that's 
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 
-This will (by default) find, compile and execute your tests through [node][]. You can tell it to execute your tests in [phantom][] if you need to, but I'd recommend node and something like [jsdom][] if possible. This generally comes down to personal preference.
+The following will then find, compile and execute your tests through [node][].
 
-```
+```bash
 $ clojure -Atest
 
 Testing example.partial-test
@@ -38,17 +38,19 @@ Ran 2 tests containing 2 assertions.
 0 failures, 0 errors.
 ```
 
-You can use the `--test-env` or `-te` flag to switch between `node` and `phantom`, like so.
+## Configuration
 
+You can configure the test runner with a few different flags, the most important one is `--env` (`-e`) which allows you to swap from node to [phantom][] if required. I would recommend sticking to node and using something like [jsdom][], but this does come down to preference and technical requirements.
+
+```bash
+$ clojure -Atest -e phantom
 ```
-$ clojure -Atest -te phantom
 
-Testing example.partial-test
+You can use `--help` to see the current arguments list and their default values.
 
-Testing example.yes-test
-
-Ran 2 tests containing 2 assertions.
-0 failures, 0 errors.
+```bash
+# Note: The extra -m prevents Clojure from showing you the Clojure CLI help.
+$ clojure -Atest -m --help
 ```
 
 ## Unlicenced
