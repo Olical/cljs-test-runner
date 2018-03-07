@@ -33,6 +33,11 @@
       <version>0.3.0-alpha4</version>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>tools.cli</artifactId>
+      <version>0.3.5</version>
+    </dependency>
+    <dependency>
       <groupId>doo</groupId>
       <artifactId>doo</artifactId>
       <version>0.1.8</version>
