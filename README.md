@@ -20,7 +20,7 @@ I recommend you put this under an alias such as `test` or `cljs-test` if that's 
 
 ```clojure
 {:deps {org.clojure/clojure {:mvn/version "1.9.0"}
-        org.clojure/clojurescript {:mvn/version "1.10.126"}}
+        org.clojure/clojurescript {:mvn/version "1.10.145"}}
  :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "0.1.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
