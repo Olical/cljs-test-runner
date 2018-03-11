@@ -59,6 +59,8 @@
         (cljs/build src compiler-opts)
         (let [{:keys [exit]} (doo/run-script doo-env compiler-opts doo-opts)]
           (reset! exit-code exit)))
+      (catch Exception e
+        (println e))
       (finally
         (io/delete-file src-path)
         (exit @exit-code)))))
