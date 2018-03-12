@@ -49,7 +49,7 @@ $ clojure -Atest -e phantom
 You can use `--help` to see the current flags and their default values.
 
 ```bash
-$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "0.1.1"}}}' -m cljs-test-runner.main --help
+$ clojure -Atest --help
   -e, --env ENV   node                    Run your tests in either node or phantom
   -s, --src PATH  ./test                  The directory containing your test files
   -o, --out PATH  ./cljs-test-runner-out  The output directory for compiled test code
