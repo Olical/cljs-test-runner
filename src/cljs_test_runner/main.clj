@@ -84,7 +84,7 @@
    ["-o" "--out PATH" "The output directory for compiled test code"
     :default "./cljs-test-runner-out"]
    ["-w" "--watch PATH" "Directory to watch for changes (alongside the src-path). May be repeated."
-    :assoc-fn (fn [m k v] (update-in m [k] (fnil conj [:src]) v))]
+    :assoc-fn (fn [m k v] (update m k (fnil conj [:src]) v))]
    ["-h" "--help"]])
 
 (defn -main
