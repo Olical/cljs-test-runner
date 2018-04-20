@@ -33,6 +33,12 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
+(defn shutdown-hook
+  "Add a function to be called when the JVM shuts down."
+  [f]
+  (let [shutdown-thread (new Thread f)]
+    (.. Runtime (getRuntime) (addShutdownHook shutdown-thread))))
+
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
   [{:keys [env src out watch]}]
@@ -49,6 +55,7 @@
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
     (spit src-path test-runner-cljs)
+    (shutdown-hook #(io/delete-file src-path))
     (try
       (let [doo-opts {}
             build-opts {:output-to out-path
@@ -65,7 +72,6 @@
       (catch Exception e
         (println e))
       (finally
-        (io/delete-file src-path)
         (exit @exit-code)))))
 
 (def cli-options
