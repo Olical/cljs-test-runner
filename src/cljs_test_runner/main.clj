@@ -44,20 +44,20 @@
         src-path (str/join "/" [src "runner.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
-                                   :node    {:target  :nodejs
-                                             :doo-env :node}
-                                   :phantom {:target  :browser
+                                   :node {:target :nodejs
+                                          :doo-env :node}
+                                   :phantom {:target :browser
                                              :doo-env :phantom})]
     (spit src-path test-runner-cljs)
     (try
-      (let [doo-opts     {}
-            build-opts   {:output-to     out-path
-                          :output-dir    out
-                          :target        target
-                          :main          'test.runner
-                          :optimizations :none}
+      (let [doo-opts {}
+            build-opts {:output-to out-path
+                        :output-dir out
+                        :target target
+                        :main 'test.runner
+                        :optimizations :none}
             run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
-            watch-opts   (assoc build-opts :watch-fn run-tests-fn)]
+            watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
           (cljs/watch (apply cljs/inputs watch) watch-opts)
           (do (cljs/build src build-opts)
@@ -85,9 +85,9 @@
   "Creates a ClojureScript test runner and executes it with node."
   [& args]
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)
-        options                          (update options :watch (partial replace options))]
+        options (update options :watch (partial replace options))]
     (cond
       (:help options) (exit 0 summary)
-      errors          (exit 1 (error-msg errors))
-      :else           (test-cljs-namespaces-in-dir options))))
+      errors (exit 1 (error-msg errors))
+      :else (test-cljs-namespaces-in-dir options))))
 
