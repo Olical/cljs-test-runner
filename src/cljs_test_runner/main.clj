@@ -33,9 +33,15 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
+(defn shutdown-hook
+  "Add a function to be called when the JVM shuts down."
+  [f]
+  (let [shutdown-thread (new Thread f)]
+    (.. Runtime (getRuntime) (addShutdownHook shutdown-thread))))
+
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env src out]}]
+  [{:keys [env src out watch]}]
   (let [test-runner-cljs (-> (io/file src)
                              (find/find-namespaces-in-dir find/cljs)
                              (->> (filter test-namespace?))
@@ -49,20 +55,23 @@
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
     (spit src-path test-runner-cljs)
+    (shutdown-hook #(io/delete-file src-path))
     (try
       (let [doo-opts {}
-            compiler-opts {:output-to out-path
-                           :output-dir out
-                           :target target
-                           :main 'test.runner
-                           :optimizations :none}]
-        (cljs/build src compiler-opts)
-        (let [{:keys [exit]} (doo/run-script doo-env compiler-opts doo-opts)]
-          (reset! exit-code exit)))
+            build-opts {:output-to out-path
+                        :output-dir out
+                        :target target
+                        :main 'test.runner
+                        :optimizations :none}
+            run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
+            watch-opts (assoc build-opts :watch-fn run-tests-fn)]
+        (if (seq watch)
+          (cljs/watch (apply cljs/inputs watch) watch-opts)
+          (do (cljs/build src build-opts)
+              (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
         (println e))
       (finally
-        (io/delete-file src-path)
         (exit @exit-code)))))
 
 (def cli-options
@@ -74,12 +83,15 @@
     :default "./test"]
    ["-o" "--out PATH" "The output directory for compiled test code"
     :default "./cljs-test-runner-out"]
+   ["-w" "--watch PATH" "Directory to watch for changes (alongside the src-path). May be repeated."
+    :assoc-fn (fn [m k v] (update m k (fnil conj [:src]) v))]
    ["-h" "--help"]])
 
 (defn -main
   "Creates a ClojureScript test runner and executes it with node."
   [& args]
-  (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]
+  (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)
+        options (update options :watch (partial replace options))]
     (cond
       (:help options) (exit 0 summary)
       errors (exit 1 (error-msg errors))
