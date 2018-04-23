@@ -11,7 +11,7 @@ Under the hood it's building a test runner file, compiling everything and then e
 In simple cases, you'll be able to execute your tests with something as succinct as the following line.
 
 ```bash
-$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "0.1.1"}}}' -m cljs-test-runner.main
+$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "1.0.0"}}}' -m cljs-test-runner.main
 ```
 
 It's likely that your tests will require dependencies and configuration that would become unwieldy in this format. You will need to add the dependency and `--main` (`-m`) parameter to your `deps.edn` file.
