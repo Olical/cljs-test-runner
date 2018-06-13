@@ -88,7 +88,7 @@
    ["-h" "--help"]])
 
 (defn -main
-  "Creates a ClojureScript test runner and executes it with node."
+  "Creates a ClojureScript test runner and executes it with node (by default)."
   [& args]
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)
         options (update options :watch (partial replace options))]
@@ -96,4 +96,3 @@
       (:help options) (exit 0 summary)
       errors (exit 1 (error-msg errors))
       :else (test-cljs-namespaces-in-dir options))))
-
