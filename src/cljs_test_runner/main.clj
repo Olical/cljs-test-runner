@@ -11,7 +11,7 @@
   [nses]
   (let [nses-str (str/join " " nses)
         quoted-nses-str (str/join " " (map #(str "'" %) nses))]
-    (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ") ) (doo-tests " quoted-nses-str ")")))
+    (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ")) (doo-tests " quoted-nses-str ")")))
 
 (defn ns-filter-fn
   "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
@@ -78,10 +78,8 @@
         (exit @exit-code)))))
 
 (def cli-options
-  [["-x" "--env ENV" "Run your tests in either node or phantom."
-    :default :node
-    :default-desc "node"
-    :parse-fn keyword]
+  [["-d" "--dir DIRNAME" "The directory containing your test files"
+    :default "test"]
    ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
     :id :ns-symbol
     :parse-fn symbol]
@@ -90,10 +88,12 @@
     :default-desc ".*-test$"
     :default #".*-test$"
     :parse-fn re-pattern]
-   ["-d" "--dir DIRNAME" "The directory containing your test files"
-    :default "test"]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
+   ["-x" "--env ENV" "Run your tests in either node or phantom."
+    :default :node
+    :default-desc "node"
+    :parse-fn keyword]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn (fn [m k v] (update m k (fnil conj [:dir]) v))]
    ["-h" "--help"]])
