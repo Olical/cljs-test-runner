@@ -35,11 +35,14 @@
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses {:keys [var]}]
-  (let [nses-str (str/join " " nses)
-        quoted-nses-str (str/join " " (map #(str "'" %) nses))
-        double-quoted-nses-str (str/join " " (map #(str "(quote '" % ")") nses))
-        filter-nses-str (str "(filter-vars! [" double-quoted-nses-str "] (var-filter {:var (quote '" var "), :include nil, :exclude nil}))")]
-    (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ")) " ns-filter-cljs " " filter-nses-str " (doo-tests " quoted-nses-str ")")))
+  (doto (str
+    "(ns test.runner
+       (:require [doo.runner :refer-macros [doo-tests]]"
+                 (str/join " " nses)"))"
+     ns-filter-cljs
+     "(filter-vars! [" (str/join " " (map #(str "'" %) nses)) "]
+        (var-filter {:var '" var ", :include nil, :exclude nil}))"
+     "(doo-tests " (str/join " " (map #(str "'" %) nses)) ")") prn))
 
 (defn ns-filter-fn
   "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
