@@ -21,7 +21,7 @@ I recommend you put this under an alias such as `test` or `cljs-test` if that's 
 ```clojure
 {:deps {org.clojure/clojure {:mvn/version "1.9.0"}
         org.clojure/clojurescript {:mvn/version "1.10.145"}}
- :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "0.1.1"}}
+ :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "1.0.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 
@@ -40,20 +40,22 @@ Ran 2 tests containing 2 assertions.
 
 ## Configuration
 
-You can configure the test runner with a few different flags, the most important one is `--env` (`-e`) which allows you to swap from node to [phantom][] if required. I would recommend sticking to node and using something like [jsdom][], but this does come down to preference and technical requirements.
+You can configure the test runner with a few different flags, the most important one is `--env` (`-x`) which allows you to swap from node to [phantom][] if required. I would recommend sticking to node and using something like [jsdom][], but this does come down to preference and technical requirements.
 
 ```bash
-$ clojure -Atest -e phantom
+$ clojure -Atest -x phantom
 ```
 
 You can use `--help` to see the current flags and their default values.
 
 ```bash
 $ clojure -Atest --help
-  -e, --env ENV     node                    Run your tests in either node or phantom
-  -s, --src PATH    ./test                  The directory containing your test files
-  -o, --out PATH    ./cljs-test-runner-out  The output directory for compiled test code
-  -w, --watch PATH                          Directory to watch for changes (alongside the src-path). May be repeated.
+  -x, --env ENV                node                  Run your tests in either node or phantom.
+  -n, --namespace SYMBOL                             Symbol indicating a specific namespace to test.
+  -r, --namespace-regex REGEX  .*-test$              Regex for namespaces to test. Only namespaces ending in '-test' are evaluated by default.
+  -d, --dir DIRNAME            test                  The directory containing your test files
+  -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
+  -w, --watch DIRNAME                                Directory to watch for changes (alongside the test dir-path). May be repeated.
   -h, --help
 ```
 
