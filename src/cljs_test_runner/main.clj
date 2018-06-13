@@ -6,12 +6,40 @@
             [cljs.build.api :as cljs]
             [doo.core :as doo]))
 
+(def ns-filter-cljs
+  "Namespace filtering code from cognitect-labs/test-runner but modified and as a string. Inserted into the test runner ClojureScript code when it's rendered. Forgive me performing string based meta programming."
+  "
+  (defn var-filter
+    [{:keys [var include exclude]}]
+    (let [test-specific (if var
+                          #{var}
+                          (constantly true))
+          test-inclusion (if include
+                           #((apply some-fn include) (meta %))
+                           (constantly true))
+          test-exclusion (if exclude
+                           #((complement (apply some-fn exclude)) (meta %))
+                           (constantly true))]
+      #(and (test-specific %)
+            (test-inclusion %)
+            (test-exclusion %))))
+
+  (defn filter-vars! [nses filter-fn]
+    (doseq [ns nses]
+      (doseq [[name var] (ns-publics ns)]
+        (when (:test (meta var))
+          (when (not (filter-fn var))
+            (ns-unmap ns name))))))
+  ")
+
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
-  [nses]
+  [nses {:keys [var]}]
   (let [nses-str (str/join " " nses)
-        quoted-nses-str (str/join " " (map #(str "'" %) nses))]
-    (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ")) (doo-tests " quoted-nses-str ")")))
+        quoted-nses-str (str/join " " (map #(str "'" %) nses))
+        double-quoted-nses-str (str/join " " (map #(str "(quote '" % ")") nses))
+        filter-nses-str (str "(filter-vars! [" double-quoted-nses-str "] (var-filter {:var (quote '" var "), :include nil, :exclude nil}))")]
+    (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ")) " ns-filter-cljs " " filter-nses-str " (doo-tests " quoted-nses-str ")")))
 
 (defn ns-filter-fn
   "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
@@ -44,11 +72,11 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env dir out watch ns-symbol ns-regex]}]
+  [{:keys [env dir out watch ns-symbol ns-regex var]}]
   (let [test-runner-cljs (-> (io/file dir)
                              (find/find-namespaces-in-dir find/cljs)
                              (->> (filter (ns-filter-fn ns-symbol ns-regex)))
-                             (render-test-runner-cljs))
+                             (render-test-runner-cljs {:var var}))
         exit-code (atom 1)
         src-path (str/join "/" [dir "cljs-test-runner.temp.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
@@ -88,6 +116,9 @@
     :default-desc ".*-test$"
     :default #".*-test$"
     :parse-fn re-pattern]
+   ["-v" "--var SYMBOL" "Symbol indicating the fully qualified name of a specific test."
+    :id :var
+    :parse-fn symbol]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
    ["-x" "--env ENV" "Run your tests in either node or phantom."
@@ -110,4 +141,4 @@
 
 (comment
   (with-redefs [exit println]
-    (-main)))
+    (-main "-v" "example.yes-test/should-run")))
