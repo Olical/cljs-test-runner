@@ -13,10 +13,13 @@
         quoted-nses-str (str/join " " (map #(str "'" %) nses))]
     (str "(ns test.runner (:require [doo.runner :refer-macros [doo-tests]] " nses-str ") ) (doo-tests " quoted-nses-str ")")))
 
-(defn test-namespace?
-  "Checks if a namespace symbol is a test namespace (ends with -test) or not."
-  [ns-name]
-  (str/ends-with? ns-name "-test"))
+(defn ns-filter-fn
+  "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
+  [ns-symbol ns-regex]
+  (fn [n]
+    (cond
+      ns-symbol (= ns-symbol n)
+      ns-regex (re-matches ns-regex (name n)))))
 
 (defn exit
   "Exit the program cleanly."
@@ -41,21 +44,21 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env src out watch]}]
-  (let [test-runner-cljs (-> (io/file src)
+  [{:keys [env dir out watch ns-symbol ns-regex]}]
+  (let [test-runner-cljs (-> (io/file dir)
                              (find/find-namespaces-in-dir find/cljs)
-                             (->> (filter test-namespace?))
+                             (->> (filter (ns-filter-fn ns-symbol ns-regex)))
                              (render-test-runner-cljs))
         exit-code (atom 1)
-        src-path (str/join "/" [src "runner.cljs"])
+        dir-path (str/join "/" [dir "runner.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
                                           :doo-env :node}
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
-    (spit src-path test-runner-cljs)
-    (shutdown-hook #(io/delete-file src-path))
+    (spit dir-path test-runner-cljs)
+    (shutdown-hook #(io/delete-file dir-path))
     (try
       (let [doo-opts {}
             build-opts {:output-to out-path
@@ -67,7 +70,7 @@
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
           (cljs/watch (apply cljs/inputs watch) watch-opts)
-          (do (cljs/build src build-opts)
+          (do (cljs/build dir build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
         (println e))
@@ -75,16 +78,24 @@
         (exit @exit-code)))))
 
 (def cli-options
-  [["-e" "--env ENV" "Run your tests in either node or phantom"
+  [["-x" "--env ENV" "Run your tests in either node or phantom."
     :default :node
     :default-desc "node"
     :parse-fn keyword]
-   ["-s" "--src PATH" "The directory containing your test files"
-    :default "./test"]
-   ["-o" "--out PATH" "The output directory for compiled test code"
-    :default "./cljs-test-runner-out"]
-   ["-w" "--watch PATH" "Directory to watch for changes (alongside the src-path). May be repeated."
-    :assoc-fn (fn [m k v] (update m k (fnil conj [:src]) v))]
+   ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
+    :id :ns-symbol
+    :parse-fn symbol]
+   ["-r" "--namespace-regex REGEX" "Regex for namespaces to test. Only namespaces ending in '-test' are evaluated by default."
+    :id :ns-regex
+    :default-desc ".*-test$"
+    :default #".*-test$"
+    :parse-fn re-pattern]
+   ["-d" "--dir DIRNAME" "The directory containing your test files"
+    :default "test"]
+   ["-o" "--out DIRNAME" "The output directory for compiled test code"
+    :default "cljs-test-runner-out"]
+   ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test dir-path). May be repeated."
+    :assoc-fn (fn [m k v] (update m k (fnil conj [:dir]) v))]
    ["-h" "--help"]])
 
 (defn -main
@@ -96,3 +107,7 @@
       (:help options) (exit 0 summary)
       errors (exit 1 (error-msg errors))
       :else (test-cljs-namespaces-in-dir options))))
+
+(comment
+  (with-redefs [exit println]
+    (-main)))
