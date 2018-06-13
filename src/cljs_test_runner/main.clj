@@ -50,15 +50,15 @@
                              (->> (filter (ns-filter-fn ns-symbol ns-regex)))
                              (render-test-runner-cljs))
         exit-code (atom 1)
-        dir-path (str/join "/" [dir "runner.cljs"])
+        src-path (str/join "/" [dir "cljs-test-runner.temp.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
                                           :doo-env :node}
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
-    (spit dir-path test-runner-cljs)
-    (shutdown-hook #(io/delete-file dir-path))
+    (spit src-path test-runner-cljs)
+    (shutdown-hook #(io/delete-file src-path))
     (try
       (let [doo-opts {}
             build-opts {:output-to out-path
@@ -94,7 +94,7 @@
     :default "test"]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
-   ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test dir-path). May be repeated."
+   ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn (fn [m k v] (update m k (fnil conj [:dir]) v))]
    ["-h" "--help"]])
 
