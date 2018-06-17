@@ -50,9 +50,12 @@ You can use `--help` to see the current flags and their default values.
 
 ```bash
 $ clojure -Atest --help
-  -d, --dir DIRNAME            test                  The directory containing your test files
+  -d, --dir DIRNAME            #{"test"}             The directory containing your test files
   -n, --namespace SYMBOL                             Symbol indicating a specific namespace to test.
-  -r, --namespace-regex REGEX  .*-test$              Regex for namespaces to test. Only namespaces ending in '-test' are evaluated by default.
+  -r, --namespace-regex REGEX  .*\-test$             Regex for namespaces to test. Only namespaces ending in '-test' are evaluated by default.
+  -v, --var SYMBOL                                   Symbol indicating the fully qualified name of a specific test.
+  -i, --include SYMBOL                               Run only tests that have this metadata keyword.
+  -e, --exclude SYMBOL                               Exclude tests with this metadata keyword.
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
   -x, --env ENV                node                  Run your tests in either node or phantom.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
