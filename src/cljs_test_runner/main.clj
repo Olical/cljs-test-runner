@@ -147,6 +147,7 @@
 (def cli-options
   [["-d" "--dir DIRNAME" "The directory containing your test files"
     :default #{"test"}
+    :default-desc "test"
     :assoc-fn accumulate]
    ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
     :id :ns-symbols
