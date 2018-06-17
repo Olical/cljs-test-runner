@@ -24,16 +24,26 @@
             (test-inclusion %)
             (test-exclusion %))))
 
-  (defn filter-vars! [publics filter-fn]
-    (doseq [[name var] publics]
-      (when (:test (meta var))
-        (when (not (filter-fn var))
-          (ns-unmap ns name)))))
+  (defn unmap [ns sym]
+    (js-delete ns (str (munge sym))))
+
+  (defn var->sym [var]
+    (symbol (:ns (meta var)) (:name (meta var))))
+
+  (defn filter-vars! [ns-syms filter-fn]
+    (doseq [[ns syms] ns-syms]
+      (doseq [[name var] syms]
+        (when (:test (meta var))
+          (when (not (filter-fn (var->sym var)))
+            (unmap ns name))))))
   ")
 
-;; OMG NS-PUBLICS AND NS-UNMAP ARE MACROS
-;; So that means my filter-vars! needs to be a macro.
-;; Yep, that's right, I'm generating ClojureScript macros from Clojure then compiling it to JavaScript and executing it in nodejs.
+(defn str-quote
+  "Return a string with a quote at the front. For use in this silly CLJS meta programming."
+  [s]
+  (if s
+    (str "'" s)
+    "nil"))
 
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
@@ -43,9 +53,9 @@
        (:require [doo.runner :refer-macros [doo-tests]]"
                  (str/join " " nses)"))"
      ns-filter-cljs
-     "(filter-vars! [" (str/join " " (map #(str "(ns-publics '" % ")") nses)) "]
-        (var-filter {:var '" var ", :include nil, :exclude nil}))"
-     "(doo-tests " (str/join " " (map #(str "'" %) nses)) ")"))
+     "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (str-quote %) ")") nses)) "}
+        (var-filter {:var " (str-quote var) ", :include nil, :exclude nil}))"
+     "(doo-tests " (str/join " " (map str-quote nses)) ")"))
 
 (defn ns-filter-fn
   "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
@@ -147,4 +157,4 @@
 
 (comment
   (with-redefs [exit println]
-    (-main "-v" "example.yes-test/should-run")))
+    (-main)))
