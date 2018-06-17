@@ -94,18 +94,20 @@
   (let [shutdown-thread (new Thread f)]
     (.. Runtime (getRuntime) (addShutdownHook shutdown-thread))))
 
+(defn find-namespaces-in-dirs [dirs]
+  (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
+
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
   [{:keys [env dir out watch ns-symbols ns-regexs var include exclude]}]
-  (let [test-runner-cljs (-> (io/file dir)
-                             (find/find-namespaces-in-dir find/cljs)
+  (let [test-runner-cljs (-> (find-namespaces-in-dirs dir)
                              (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
                                                          :ns-regexs ns-regexs})))
                              (render-test-runner-cljs {:var var
                                                        :include include
                                                        :exclude exclude}))
         exit-code (atom 1)
-        src-path (str/join "/" [dir "cljs-test-runner.temp.cljs"])
+        src-path (str/join "/" [(first dir) "cljs-test-runner.temp.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
@@ -125,7 +127,7 @@
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
           (cljs/watch (apply cljs/inputs watch) watch-opts)
-          (do (cljs/build dir build-opts)
+          (do (cljs/build (first dir) build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
         (println e))
@@ -144,7 +146,8 @@
 
 (def cli-options
   [["-d" "--dir DIRNAME" "The directory containing your test files"
-    :default "test"]
+    :default #{"test"}
+    :assoc-fn accumulate]
    ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
     :id :ns-symbols
     :parse-fn symbol
