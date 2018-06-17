@@ -9,10 +9,13 @@
 (def ns-filter-cljs
   "Namespace filtering code from cognitect-labs/test-runner but modified and as a string. Inserted into the test runner ClojureScript code when it's rendered. Forgive me performing string based meta programming."
   "
+  (defn var->sym [var]
+    (symbol (:ns (meta var)) (:name (meta var))))
+
   (defn var-filter
     [{:keys [var include exclude]}]
     (let [test-specific (if var
-                          #{var}
+                          (comp var var->sym)
                           (constantly true))
           test-inclusion (if include
                            #((apply some-fn include) (meta %))
@@ -27,43 +30,48 @@
   (defn unmap [ns sym]
     (js-delete ns (str (munge sym))))
 
-  (defn var->sym [var]
-    (symbol (:ns (meta var)) (:name (meta var))))
-
   (defn filter-vars! [ns-syms filter-fn]
     (doseq [[ns syms] ns-syms]
       (doseq [[name var] syms]
         (when (:test (meta var))
-          (when (not (filter-fn (var->sym var)))
+          (when (not (filter-fn var))
             (unmap ns name))))))
   ")
 
-(defn str-quote
+(defn format-value
   "Return a string with a quote at the front. For use in this silly CLJS meta programming."
   [s]
-  (if s
-    (str "'" s)
+  (str (when (symbol? s) "'") s))
+
+(defn format-filter
+  "Format filter values as a possible set or nil."
+  [coll]
+  (if coll
+    (str "#{" (str/join " " (map format-value coll)) "}")
     "nil"))
 
 (defn render-test-runner-cljs
   "Renders a ClojureScript test runner from a seq of namespaces."
-  [nses {:keys [var]}]
+  [nses {:keys [var include exclude]}]
   (str
     "(ns test.runner
        (:require [doo.runner :refer-macros [doo-tests]]"
                  (str/join " " nses)"))"
      ns-filter-cljs
-     "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (str-quote %) ")") nses)) "}
-        (var-filter {:var " (str-quote var) ", :include nil, :exclude nil}))"
-     "(doo-tests " (str/join " " (map str-quote nses)) ")"))
+     "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (format-value %) ")") nses)) "}
+        (var-filter {:var " (format-filter var) "
+                     :include " (format-filter include) "
+                     :exclude " (format-filter exclude) "}))"
+     "(doo-tests " (str/join " " (map format-value nses)) ")"))
 
 (defn ns-filter-fn
-  "Given a possible namespace symbol and regex, return a function that returns true if it's given namespace matches one of the rules."
-  [ns-symbol ns-regex]
-  (fn [n]
-    (cond
-      ns-symbol (= ns-symbol n)
-      ns-regex (re-matches ns-regex (name n)))))
+  "Given possible namespace symbols and regexs, return a function that returns true if it's given namespace matches one of the rules."
+  [{:keys [ns-symbols ns-regexs]}]
+  (let [ns-regexs (or ns-regexs #{#".*\-test$"})]
+    (fn [n]
+      (if ns-symbols
+        (ns-symbols n)
+        (some #(re-matches % (name n)) ns-regexs)))))
 
 (defn exit
   "Exit the program cleanly."
@@ -88,11 +96,14 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env dir out watch ns-symbol ns-regex var]}]
+  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude]}]
   (let [test-runner-cljs (-> (io/file dir)
                              (find/find-namespaces-in-dir find/cljs)
-                             (->> (filter (ns-filter-fn ns-symbol ns-regex)))
-                             (render-test-runner-cljs {:var var}))
+                             (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
+                                                         :ns-regexs ns-regexs})))
+                             (render-test-runner-cljs {:var var
+                                                       :include include
+                                                       :exclude exclude}))
         exit-code (atom 1)
         src-path (str/join "/" [dir "cljs-test-runner.temp.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
@@ -121,20 +132,37 @@
       (finally
         (exit @exit-code)))))
 
+(defn parse-kw
+  "Parse a keyword from a string, dropping the initial : if required."
+  [s]
+  (if (.startsWith s ":") (read-string s) (keyword s)))
+
+(defn accumulate
+  "Used in CLI options to accumulate multiple occurrences of a flag."
+  [m k v]
+  (update-in m [k] (fnil conj #{}) v))
+
 (def cli-options
   [["-d" "--dir DIRNAME" "The directory containing your test files"
     :default "test"]
    ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
-    :id :ns-symbol
-    :parse-fn symbol]
+    :id :ns-symbols
+    :parse-fn symbol
+    :assoc-fn accumulate]
    ["-r" "--namespace-regex REGEX" "Regex for namespaces to test. Only namespaces ending in '-test' are evaluated by default."
-    :id :ns-regex
-    :default-desc ".*-test$"
-    :default #".*-test$"
-    :parse-fn re-pattern]
+    :id :ns-regexs
+    :default-desc ".*\\-test$"
+    :parse-fn re-pattern
+    :assoc-fn accumulate]
    ["-v" "--var SYMBOL" "Symbol indicating the fully qualified name of a specific test."
-    :id :var
-    :parse-fn symbol]
+    :parse-fn symbol
+    :assoc-fn accumulate]
+   ["-i" "--include SYMBOL" "Run only tests that have this metadata keyword."
+    :parse-fn parse-kw
+    :assoc-fn accumulate]
+   ["-e" "--exclude SYMBOL" "Exclude tests with this metadata keyword."
+    :parse-fn parse-kw
+    :assoc-fn accumulate]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
    ["-x" "--env ENV" "Run your tests in either node or phantom."
@@ -142,7 +170,7 @@
     :default-desc "node"
     :parse-fn keyword]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
-    :assoc-fn (fn [m k v] (update m k (fnil conj [:dir]) v))]
+    :assoc-fn accumulate]
    ["-h" "--help"]])
 
 (defn -main
@@ -156,5 +184,20 @@
       :else (test-cljs-namespaces-in-dir options))))
 
 (comment
-  (with-redefs [exit println]
-    (-main)))
+  ;; all
+  (with-redefs [exit println] (-main))
+
+  ;; ns symbol
+  (with-redefs [exit println] (-main "-n" "example.yes-test"))
+
+  ;; ns regexs
+  (with-redefs [exit println] (-main "-r" ".*yes.*"))
+
+  ;; var symbol
+  (with-redefs [exit println] (-main "-v" "example.yes-test/should-run"))
+
+  ;; include
+  (with-redefs [exit println] (-main "-i" "integration"))
+
+  ;; exclude
+  (with-redefs [exit println] (-main "-e" "integration")))
