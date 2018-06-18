@@ -64,6 +64,10 @@ $ clojure -Atest --help
   -h, --help
 ```
 
+## Gotchas
+
+ * Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
+
 ## Unlicenced
 
 Find the full [unlicense][] in the `UNLICENSE` file, but here's a snippet.

@@ -104,13 +104,15 @@
                                                        :include include
                                                        :exclude exclude}))
         exit-code (atom 1)
-        src-path (str/join "/" [out "generated-test-runner.cljs"])
+        gen-path (str/join "/" [out "gen"])
+        src-path (str/join "/" [gen-path "test-runner.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
                                           :doo-env :node}
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
+    (io/make-parents src-path)
     (spit src-path test-runner-cljs)
     (try
       (let [doo-opts {}
@@ -123,7 +125,7 @@
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
           (cljs/watch (apply cljs/inputs watch) watch-opts)
-          (do (cljs/build out build-opts)
+          (do (cljs/build gen-path build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
         (println e))
@@ -205,4 +207,7 @@
   (run "-i" "integration")
 
   ;; exclude
-  (run "-e" "integration"))
+  (run "-e" "integration")
+
+  ;; more dirs
+  (run "-d" "other-tests"))
