@@ -188,20 +188,24 @@
       :else (test-cljs-namespaces-in-dir options))))
 
 (comment
+  (defmacro run [& args]
+    `(with-redefs [exit println]
+       (-main ~@args)))
+
   ;; all
-  (with-redefs [exit println] (-main))
+  (run)
 
   ;; ns symbol
-  (with-redefs [exit println] (-main "-n" "example.yes-test"))
+  (run "-n" "example.yes-test")
 
   ;; ns regexs
-  (with-redefs [exit println] (-main "-r" ".*yes.*"))
+  (run "-r" ".*yes.*")
 
   ;; var symbol
-  (with-redefs [exit println] (-main "-v" "example.yes-test/should-run"))
+  (run "-v" "example.yes-test/should-run")
 
   ;; include
-  (with-redefs [exit println] (-main "-i" "integration"))
+  (run "-i" "integration")
 
   ;; exclude
-  (with-redefs [exit println] (-main "-e" "integration")))
+  (run "-e" "integration"))
