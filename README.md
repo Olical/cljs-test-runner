@@ -14,6 +14,8 @@ In simple cases, you'll be able to execute your tests with something as succinct
 $ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "2.0.0"}}}' -m cljs-test-runner.main
 ```
 
+> Note: The generated test code is placed in the directory `cljs-test-runner-out` by default (configure with `--out`), you should add that to your `.gitignore` file.
+
 It's likely that your tests will require dependencies and configuration that would become unwieldy in this format. You will need to add the dependency and `--main` (`-m`) parameter to your `deps.edn` file.
 
 I recommend you put this under an alias such as `test` or `cljs-test` if that's already taken by your Clojure tests.
