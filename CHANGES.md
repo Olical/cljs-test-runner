@@ -5,6 +5,9 @@
  * `-e` became `-x` as a shortcut for `--env`.
  * Added `--namespace` (`-n`) so you can test a single namespace by it's symbol.
  * Added `--namespace-regex` (`-r`) so you can test namespaces matching a regex. This default to any namespace ending in `-test`.
+ * Added filtering of tests by symbol or metadata keywords.
+ * Made all options repeatable, so now you can specify `-d test -d other-test-dir` as well as `-v some-test -v some-other-test`.
+ * Output the rendered ClojureScript test runner to the output directory, so you only have to git ignore `cljs-test-runner-out`.
 
 ## 1.0.0
 
