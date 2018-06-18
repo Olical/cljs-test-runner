@@ -88,12 +88,6 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
-(defn shutdown-hook
-  "Add a function to be called when the JVM shuts down."
-  [f]
-  (let [shutdown-thread (new Thread f)]
-    (.. Runtime (getRuntime) (addShutdownHook shutdown-thread))))
-
 (defn find-namespaces-in-dirs [dirs]
   (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
 
@@ -107,7 +101,7 @@
                                                        :include include
                                                        :exclude exclude}))
         exit-code (atom 1)
-        src-path (str/join "/" [(first dir) "cljs-test-runner.temp.cljs"])
+        src-path (str/join "/" [out "generated-test-runner.cljs"])
         out-path (str/join "/" [out "test-runner.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
@@ -115,7 +109,6 @@
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
     (spit src-path test-runner-cljs)
-    (shutdown-hook #(io/delete-file src-path))
     (try
       (let [doo-opts {}
             build-opts {:output-to out-path
@@ -127,7 +120,7 @@
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
           (cljs/watch (apply cljs/inputs watch) watch-opts)
-          (do (cljs/build (first dir) build-opts)
+          (do (cljs/build out build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
         (println e))
