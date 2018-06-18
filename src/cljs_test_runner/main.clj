@@ -1,4 +1,5 @@
 (ns cljs-test-runner.main
+  "Discover and run ClojureScript tests in node (by default)."
   (:require [clojure.tools.namespace.find :as find]
             [clojure.java.io :as io]
             [clojure.string :as str]
@@ -88,7 +89,9 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
-(defn find-namespaces-in-dirs [dirs]
+(defn find-namespaces-in-dirs
+  "Given a set of directory paths, find every ClojureScript namespace within those directories and return it as one sequence."
+  [dirs]
   (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
 
 (defn test-cljs-namespaces-in-dir
@@ -138,6 +141,7 @@
   (update-in m [k] (fnil conj #{}) v))
 
 (def cli-options
+  "Options for use with clojure.tools.cli."
   [["-d" "--dir DIRNAME" "The directory containing your test files"
     :default #{"test"}
     :default-desc "test"
