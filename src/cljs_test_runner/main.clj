@@ -126,9 +126,7 @@
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
 
         (if (seq watch)
-          (let [watch-paths (into watch (cons gen-path dir))]
-            (println "Watching paths:" watch-paths)
-            (cljs/watch (apply cljs/inputs watch-paths) watch-opts))
+          (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
           (do (cljs/build gen-path build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
