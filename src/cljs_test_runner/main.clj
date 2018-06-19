@@ -189,9 +189,11 @@
       :else (test-cljs-namespaces-in-dir options))))
 
 (comment
-  (defmacro run [& args]
-    `(with-redefs [exit println]
-       (-main ~@args)))
+  (defn run
+    "Runs the test suite with the give arguments without letting the process die at the end."
+    [& args]
+    (with-redefs [exit println]
+      (apply -main args)))
 
   ;; all
   (run)
