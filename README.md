@@ -61,7 +61,8 @@ $ clojure -Atest --help
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
   -x, --env ENV                node                  Run your tests in either node or phantom.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
-  -h, --help
+  -V, --verbose                                      Flag passed directly to the ClojureScript compiler to enable verbose compiler output.
+  -H, --help
 ```
 
 ## Gotchas

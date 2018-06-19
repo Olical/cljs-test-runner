@@ -96,7 +96,7 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude]}]
+  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose]}]
   (let [test-runner-cljs (-> (find-namespaces-in-dirs dir)
                              (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
                                                          :ns-regexs ns-regexs})))
@@ -120,11 +120,15 @@
                         :output-dir out
                         :target target
                         :main 'test.runner
-                        :optimizations :none}
+                        :optimizations :none
+                        :verbose verbose}
             run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
+
         (if (seq watch)
-          (cljs/watch (apply cljs/inputs watch) watch-opts)
+          (let [watch-paths (into watch (cons gen-path dir))]
+            (println "Watching paths:" watch-paths)
+            (cljs/watch (apply cljs/inputs watch-paths) watch-opts))
           (do (cljs/build gen-path build-opts)
               (->> (run-tests-fn) :exit (reset! exit-code)))))
       (catch Exception e
@@ -174,13 +178,13 @@
     :parse-fn keyword]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
-   ["-h" "--help"]])
+   ["-V" "--verbose" "Flag passed directly to the ClojureScript compiler to enable verbose compiler output."]
+   ["-H" "--help"]])
 
 (defn -main
   "Creates a ClojureScript test runner and executes it with node (by default)."
   [& args]
-  (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)
-        options (update options :watch (partial replace options))]
+  (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]
     (cond
       (:help options) (exit 0 summary)
       errors (exit 1 (error-msg errors))
