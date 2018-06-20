@@ -41,7 +41,7 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env src out watch]}]
+  [{:keys [env src out watch compiler-config]}]
   (let [test-runner-cljs (-> (io/file src)
                              (find/find-namespaces-in-dir find/cljs)
                              (->> (filter test-namespace?))
@@ -54,15 +54,19 @@
                                           :doo-env :node}
                                    :phantom {:target :browser
                                              :doo-env :phantom})]
+
     (spit src-path test-runner-cljs)
     (shutdown-hook #(io/delete-file src-path))
     (try
       (let [doo-opts {}
-            build-opts {:output-to out-path
-                        :output-dir out
-                        :target target
-                        :main 'test.runner
-                        :optimizations :none}
+            build-opts (merge (-> compiler-config
+                                  (#(when % (slurp %)))
+                                  clojure.edn/read-string)
+                              {:output-to out-path
+                               :output-dir out
+                               :target target
+                               :main 'test.runner
+                               :optimizations :none})
             run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
         (if (seq watch)
@@ -85,6 +89,7 @@
     :default "./cljs-test-runner-out"]
    ["-w" "--watch PATH" "Directory to watch for changes (alongside the src-path). May be repeated."
     :assoc-fn (fn [m k v] (update m k (fnil conj [:src]) v))]
+   ["-c" "--compiler-config PATH" "Edn file containing opts to be passed to the cljs compiler."]
    ["-h" "--help"]])
 
 (defn -main

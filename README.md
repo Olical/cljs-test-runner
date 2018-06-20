@@ -46,7 +46,7 @@ You can configure the test runner with a few different flags, the most important
 $ clojure -Atest -e phantom
 ```
 
-You can use `--help` to see the current flags and their default values.
+If you need to use any cljs compiler options that are not mirrored in cljs-test-runners flags, you can put them into an edn file and point to that file using the `--config-file` flag. This will work like `cljs-main`'s `-co` flag. Note that options that are given explicitly using cljs-test-runner flags (or have default values), will overwrite any options given in the file.  You can use `--help` to see the current flags and their default values.
 
 ```bash
 $ clojure -Atest --help
@@ -54,6 +54,7 @@ $ clojure -Atest --help
   -s, --src PATH    ./test                  The directory containing your test files
   -o, --out PATH    ./cljs-test-runner-out  The output directory for compiled test code
   -w, --watch PATH                          Directory to watch for changes (alongside the src-path). May be repeated.
+  -c, --config-file PATH                    Edn file containing opts to be passed to the cljs compiler.
   -h, --help
 ```
 
