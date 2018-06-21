@@ -48,6 +48,8 @@ You can configure the test runner with a few different flags, the most important
 $ clojure -Atest -x phantom
 ```
 
+If you need to use `foreign-libs` or any cljs compiler flags that are not mirrored in cljs-test-runner's flags, you can put them into an edn file and point to that file using the `--compile-opts` flag. Note that any flags that are given explicitly using cljs-test-runner flags (or have default values) will override any options given in the edn file.
+
 You can use `--help` to see the current flags and their default values.
 
 ```bash
@@ -61,6 +63,7 @@ $ clojure -Atest --help
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
   -x, --env ENV                node                  Run your tests in either node or phantom.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
+  -c, --compile-opts PATH                            EDN file containing opts to be passed to the ClojureScript compiler.
   -V, --verbose                                      Flag passed directly to the ClojureScript compiler to enable verbose compiler output.
   -H, --help
 ```

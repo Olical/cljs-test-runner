@@ -96,7 +96,7 @@
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose]}]
+  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose compile-opts]}]
   (let [test-runner-cljs (-> (find-namespaces-in-dirs dir)
                              (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
                                                          :ns-regexs ns-regexs})))
@@ -116,12 +116,15 @@
     (spit src-path test-runner-cljs)
     (try
       (let [doo-opts {}
-            build-opts {:output-to out-path
-                        :output-dir out
-                        :target target
-                        :main 'test.runner
-                        :optimizations :none
-                        :verbose verbose}
+            build-opts (merge {:output-to out-path
+                               :output-dir out
+                               :target target
+                               :main 'test.runner
+                               :optimizations :none
+                               :verbose verbose}
+                              (-> compile-opts
+                                  (#(when % (slurp %)))
+                                  clojure.edn/read-string))
             run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
 
@@ -176,6 +179,7 @@
     :parse-fn keyword]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
+   ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."]
    ["-V" "--verbose" "Flag passed directly to the ClojureScript compiler to enable verbose compiler output."]
    ["-H" "--help"]])
 
