@@ -10,6 +10,7 @@
  * Added `-V` / `--verbose` for turning the ClojureScript compiler verbose flag on when you want it.
  * Made all options repeatable, so now you can specify `-d test -d other-test-dir` as well as `-v some-test -v some-other-test`.
  * Output the rendered ClojureScript test runner to the output directory, so you only have to git ignore `cljs-test-runner-out`.
+ * Added `--compile-opts` thanks to [@kthu](https://github.com/kthu) in [#7](https://github.com/Olical/cljs-test-runner/pull/7).
 
 ## 1.0.0
 
