@@ -48,7 +48,7 @@ You can configure the test runner with a few different flags, the most important
 $ clojure -Atest -x phantom
 ```
 
-If you need to use `foreign-libs` or any cljs compiler flags that are not mirrored in cljs-test-runner's flags, you can put them into an edn file and point to that file using the `--compile-opts` flag. Note that any flags that are given explicitly using cljs-test-runner flags (or have default values) will override any options given in the edn file.
+If you need to use `foreign-libs` or any cljs compiler flags that are not mirrored in cljs-test-runner's flags, you can put them into an EDN file and point to that file using the `--compile-opts` flag.
 
 You can use `--help` to see the current flags and their default values.
 
