@@ -176,7 +176,7 @@
    ["-x" "--env ENV" "Run your tests in either node or phantom."
     :default :node
     :default-desc "node"
-    :parse-fn keyword]
+    :parse-fn parse-kw]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
    ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."]
