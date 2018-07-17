@@ -95,11 +95,12 @@
   [dirs]
   (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
 
-(defn load-config
-  "Maybe read EDN from the given path, otherwise nil"
+(defn load-opts
+  "Read EDN from the given path if not nil, otherwise returns an empty map."
   [path]
-  (when path
-    (edn/read-string (slurp path))))
+  (if path
+    (edn/read-string (slurp path))
+    {}))
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
@@ -128,8 +129,8 @@
                                :main 'test.runner
                                :optimizations :none
                                :verbose verbose}
-                              (load-config compile-opts))
-            run-tests-fn #(doo/run-script doo-env build-opts (load-config doo-opts))
+                              compile-opts)
+            run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
 
         (if (seq watch)
@@ -183,8 +184,10 @@
     :parse-fn parse-kw]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
-   ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."]
-   ["-D" "--doo-opts PATH" "EDN file containing opts to be passed to doo."]
+   ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."
+    :parse-fn load-opts]
+   ["-D" "--doo-opts PATH" "EDN file containing opts to be passed to doo."
+    :parse-fn load-opts]
    ["-V" "--verbose" "Flag passed directly to the ClojureScript compiler to enable verbose compiler output."]
    ["-H" "--help"]])
 
@@ -227,6 +230,6 @@
 
   ;; doo-opts
   (run "-D" "test/doo-opts-test.edn")
-  
+
   ;; help
   (run "-H"))
