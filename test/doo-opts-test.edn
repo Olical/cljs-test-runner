@@ -1,0 +1,1 @@
+{:paths {:node "node --trace-gc --trace-gc-verbose"}}

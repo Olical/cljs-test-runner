@@ -3,6 +3,7 @@
   (:require [clojure.tools.namespace.find :as find]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.edn :as edn]
             [clojure.tools.cli :as cli]
             [cljs.build.api :as cljs]
             [doo.core :as doo]))
@@ -94,9 +95,15 @@
   [dirs]
   (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
 
+(defn load-config
+  "Maybe read EDN from the given path, otherwise nil"
+  [path]
+  (when path
+    (edn/read-string (slurp path))))
+
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
-  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose compile-opts]}]
+  [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose compile-opts doo-opts]}]
   (let [test-runner-cljs (-> (find-namespaces-in-dirs dir)
                              (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
                                                          :ns-regexs ns-regexs})))
@@ -115,17 +122,14 @@
     (io/make-parents src-path)
     (spit src-path test-runner-cljs)
     (try
-      (let [doo-opts {}
-            build-opts (merge {:output-to out-path
+      (let [build-opts (merge {:output-to out-path
                                :output-dir out
                                :target target
                                :main 'test.runner
                                :optimizations :none
                                :verbose verbose}
-                              (-> compile-opts
-                                  (#(when % (slurp %)))
-                                  clojure.edn/read-string))
-            run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
+                              (load-config compile-opts))
+            run-tests-fn #(doo/run-script doo-env build-opts (load-config doo-opts))
             watch-opts (assoc build-opts :watch-fn run-tests-fn)]
 
         (if (seq watch)
@@ -180,6 +184,7 @@
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
    ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."]
+   ["-D" "--doo-opts PATH" "EDN file containing opts to be passed to doo."]
    ["-V" "--verbose" "Flag passed directly to the ClojureScript compiler to enable verbose compiler output."]
    ["-H" "--help"]])
 
@@ -218,4 +223,10 @@
   (run "-e" "integration")
 
   ;; more dirs
-  (run "-d" "other-tests"))
+  (run "-d" "other-tests")
+
+  ;; doo-opts
+  (run "-D" "test/doo-opts-test.edn")
+  
+  ;; help
+  (run "-H"))

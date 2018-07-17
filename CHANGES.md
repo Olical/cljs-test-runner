@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 2.1.0
+
+ * Added `--doo-opts` (`-D`) which is analogous to `--compile-opts`, as recommended by [@johnmn3](https://github.com/johnmn3) in [#9](https://github.com/Olical/cljs-test-runner/issues/9).
+
 ## 2.0.0
 
  * `-e` became `-x` as a shortcut for `--env`.
