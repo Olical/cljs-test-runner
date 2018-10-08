@@ -155,9 +155,9 @@
 (def cli-options
   "Options for use with clojure.tools.cli."
   [["-d" "--dir DIRNAME" "The directory containing your test files"
-    :default #{"test"}
     :default-desc "test"
-    :assoc-fn accumulate]
+    :assoc-fn accumulate
+    :default-fn (constantly #{"test"})]
    ["-n" "--namespace SYMBOL" "Symbol indicating a specific namespace to test."
     :id :ns-symbols
     :parse-fn symbol
