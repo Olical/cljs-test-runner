@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.0.0
+
+ * Merged [#15](https://github.com/Olical/cljs-test-runner/pull/15) - Improves `--dir` so it accumulated but replaces the default if you use it.
+
 ## 2.1.0
 
  * Added `--doo-opts` (`-D`) which is analogous to `--compile-opts`, as recommended by [@johnmn3](https://github.com/johnmn3) in [#9](https://github.com/Olical/cljs-test-runner/issues/9).
