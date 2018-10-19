@@ -57,13 +57,13 @@
   [nses {:keys [var include exclude]}]
   (str
     "(ns gen.test-runner
-       (:require [doo.runner :refer-macros [doo-tests]]"
-                 (str/join " " nses)"))"
+       (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses)"]))"
      ns-filter-cljs
      "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (format-value %) ")") nses)) "}
         (var-filter {:var " (format-filter var) "
                      :include " (format-filter include) "
                      :exclude " (format-filter exclude) "}))"
+     "\n"
      "(doo-tests " (str/join " " (map format-value nses)) ")"))
 
 (defn ns-filter-fn
