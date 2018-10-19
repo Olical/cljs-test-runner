@@ -125,7 +125,6 @@
     (try
       (let [build-opts (merge {:output-to out-path
                                :output-dir out
-                               :asset-path out
                                :target target
                                :main "gen.test-runner"
                                :optimizations :none
