@@ -83,7 +83,7 @@ This actually applies to everything other than `{:optimizations :none}` (which i
 {:optimizations :advanced}
 ```
 
-The Closure compiler requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
+The Closure Compiler requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
 
 ```edn
 :paths ["src" "test" "cljs-test-runner-out/gen"]
