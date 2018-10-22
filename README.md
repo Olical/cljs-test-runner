@@ -11,7 +11,7 @@ Under the hood it's building a test runner file, compiling everything and then e
 In simple cases, you'll be able to execute your tests with something as succinct as the following line.
 
 ```bash
-$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.0.0"}}}' -m cljs-test-runner.main
+$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.1.0"}}}' -m cljs-test-runner.main
 ```
 
 > Note: The generated test code is placed in the directory `cljs-test-runner-out` by default (configure with `--out`), you should add that to your `.gitignore` file.
@@ -23,7 +23,7 @@ I recommend you put this under an alias such as `test` or `cljs-test` if that's 
 ```clojure
 {:deps {org.clojure/clojure {:mvn/version "1.9.0"}
         org.clojure/clojurescript {:mvn/version "1.10.145"}}
- :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.0.0"}}
+ :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.1.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 

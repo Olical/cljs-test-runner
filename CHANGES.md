@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.1.0
+
+ * Merged [#17](https://github.com/Olical/cljs-test-runner/pull/17) - Fixes running tests with advanced compilation as mentioned in [#16](https://github.com/Olical/cljs-test-runner/issues/16).
+
 ## 3.0.0
 
  * Merged [#15](https://github.com/Olical/cljs-test-runner/pull/15) - Improves `--dir` so it accumulated but replaces the default if you use it.
