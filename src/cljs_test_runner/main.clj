@@ -56,14 +56,14 @@
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses {:keys [var include exclude]}]
   (str
-    "(ns test.runner
-       (:require [doo.runner :refer-macros [doo-tests]]"
-                 (str/join " " nses)"))"
+    "(ns cljs-test-runner.gen
+       (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses)"]))"
      ns-filter-cljs
      "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (format-value %) ")") nses)) "}
         (var-filter {:var " (format-filter var) "
                      :include " (format-filter include) "
                      :exclude " (format-filter exclude) "}))"
+     "\n"
      "(doo-tests " (str/join " " (map format-value nses)) ")"))
 
 (defn ns-filter-fn
@@ -113,8 +113,8 @@
                                                        :exclude exclude}))
         exit-code (atom 1)
         gen-path (str/join "/" [out "gen"])
-        src-path (str/join "/" [gen-path "test-runner.cljs"])
-        out-path (str/join "/" [out "test-runner.js"])
+        src-path (str/join "/" [gen-path "cljs_test_runner" "gen.cljs"])
+        out-path (str/join "/" [out "cljs_test_runner.gen.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
                                           :doo-env :node}
@@ -126,7 +126,7 @@
       (let [build-opts (merge {:output-to out-path
                                :output-dir out
                                :target target
-                               :main 'test.runner
+                               :main "cljs-test-runner.gen"
                                :optimizations :none
                                :verbose verbose}
                               compile-opts)
@@ -230,6 +230,9 @@
 
   ;; doo-opts
   (run "-D" "test/doo-opts-test.edn")
+
+  ;; cljs-opts
+  (run "-c" "test/cljs-opts-test.edn")
 
   ;; help
   (run "-H"))

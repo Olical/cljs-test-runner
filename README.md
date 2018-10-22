@@ -71,7 +71,35 @@ $ clojure -Atest --help
 
 ## Gotchas
 
- * Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
+### Paths
+
+Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
+
+### Advanced compilation
+
+This actually applies to everything other than `{:optimizations :none}` (which is the default). To use any Closure Compiler optimisation levels you will need to create an EDN file containing something like this:
+
+```edn
+{:optimizations :advanced}
+```
+
+The Closure compiler requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
+
+```edn
+:paths ["src" "test" "cljs-test-runner-out/gen"]
+```
+
+It will fail the first time you run this, that's because that directory doesn't exist yet so it'll be removed from the path on startup. To fix this you can run the following before executing your tests:
+
+```bash
+mkdir -p cljs-test-runner-out/gen
+```
+
+Now when you run the following, your tests will be executed with advanced compilation:
+
+```bash
+clj -m cljs-test-runner.main -c ./config/advanced-compilation.edn
+```
 
 ## Unlicenced
 
