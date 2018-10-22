@@ -56,7 +56,7 @@
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses {:keys [var include exclude]}]
   (str
-    "(ns gen.test-runner
+    "(ns cljs-test-runner.gen
        (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses)"]))"
      ns-filter-cljs
      "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (format-value %) ")") nses)) "}
@@ -113,8 +113,8 @@
                                                        :exclude exclude}))
         exit-code (atom 1)
         gen-path (str/join "/" [out "gen"])
-        src-path (str/join "/" [gen-path "test_runner.cljs"])
-        out-path (str/join "/" [out "test_runner.js"])
+        src-path (str/join "/" [gen-path "cljs_test_runner" "gen.cljs"])
+        out-path (str/join "/" [out "cljs_test_runner.gen.js"])
         {:keys [target doo-env]} (case env
                                    :node {:target :nodejs
                                           :doo-env :node}
@@ -126,7 +126,7 @@
       (let [build-opts (merge {:output-to out-path
                                :output-dir out
                                :target target
-                               :main "gen.test-runner"
+                               :main "cljs-test-runner.gen"
                                :optimizations :none
                                :verbose verbose}
                               compile-opts)
