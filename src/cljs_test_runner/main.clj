@@ -119,7 +119,9 @@
                                    :node {:target :nodejs
                                           :doo-env :node}
                                    :phantom {:target :browser
-                                             :doo-env :phantom})]
+                                             :doo-env :phantom}
+                                   :chrome-headless {:target :browser
+                                                     :doo-env :chrome-headless})]
     (io/make-parents src-path)
     (spit src-path test-runner-cljs)
     (try
