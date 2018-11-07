@@ -42,7 +42,7 @@ Ran 2 tests containing 2 assertions.
 
 ## Configuration
 
-You can configure the test runner with a few different flags, the most important one is `--env` (`-x`) which allows you to swap from node to [phantom][] if required. I would recommend sticking to node and using something like [jsdom][], but this does come down to preference and technical requirements.
+You can configure the test runner with a few different flags, the most important one is `--env` (`-x`) which allows you to swap from node to [phantom][] or chrome-headless if required. I would recommend sticking to node and using something like [jsdom][], but this does come down to preference and technical requirements.
 
 ```bash
 $ clojure -Atest -x phantom
@@ -61,7 +61,7 @@ $ clojure -Atest --help
   -i, --include SYMBOL                               Run only tests that have this metadata keyword.
   -e, --exclude SYMBOL                               Exclude tests with this metadata keyword.
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
-  -x, --env ENV                node                  Run your tests in either node or phantom.
+  -x, --env ENV                node                  Run your tests in either node, phantom or chrome-headless.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
   -c, --compile-opts PATH                            EDN file containing opts to be passed to the ClojureScript compiler.
   -D, --doo-opts PATH                                EDN file containing opts to be passed to doo.

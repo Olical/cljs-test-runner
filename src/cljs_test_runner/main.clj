@@ -180,7 +180,7 @@
     :assoc-fn accumulate]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
-   ["-x" "--env ENV" "Run your tests in either node or phantom."
+   ["-x" "--env ENV" "Run your tests in either node, phantom or chrome-headless."
     :default :node
     :default-desc "node"
     :parse-fn parse-kw]
