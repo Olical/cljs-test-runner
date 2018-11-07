@@ -1,5 +1,10 @@
 # cljs-test-runner changes
 
+## 3.2.0
+
+ * Merged [#19](https://github.com/Olical/cljs-test-runner/pull/19) - Adds `chrome-headless` to the envs list.
+ * Added some more documentation and caveats about running with `:simple` and `:whitespace` optimisation levels.
+
 ## 3.1.0
 
  * Merged [#17](https://github.com/Olical/cljs-test-runner/pull/17) - Fixes running tests with advanced compilation as mentioned in [#16](https://github.com/Olical/cljs-test-runner/issues/16).
