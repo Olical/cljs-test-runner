@@ -77,13 +77,13 @@ Make sure the directory (or directories!) containing your tests are on your Java
 
 ### Advanced compilation
 
-This actually applies to everything other than `{:optimizations :none}` (which is the default). To use any Closure Compiler optimisation levels you will need to create an EDN file containing something like this:
+To use Closure Compiler advanced optimisation levels you will need to create an EDN file like this:
 
 ```edn
 {:optimizations :advanced}
 ```
 
-The Closure Compiler requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
+The Closure Compiler then requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
 
 ```edn
 :paths ["src" "test" "cljs-test-runner-out/gen"]
@@ -100,6 +100,8 @@ Now when you run the following, your tests will be executed with advanced compil
 ```bash
 clj -m cljs-test-runner.main -c ./config/advanced-compilation.edn
 ```
+
+There is a known issue with `:simple` and `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none` or `:advanced`, the original issue for optimisation levels breaking things is #16.
 
 ## Unlicenced
 
