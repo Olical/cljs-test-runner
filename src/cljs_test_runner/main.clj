@@ -29,15 +29,12 @@
             (test-inclusion %)
             (test-exclusion %))))
 
-  (defn unmap [ns sym]
-    (js-delete ns (str (munge sym))))
-
   (defn filter-vars! [ns-syms filter-fn]
     (doseq [[ns syms] ns-syms]
       (doseq [[name var] syms]
         (when (:test (meta var))
           (when (not (filter-fn var))
-            (unmap ns name))))))
+            (set! (.-cljs$lang$test @var) nil))))))
   ")
 
 (defn format-value
