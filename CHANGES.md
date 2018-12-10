@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.2.1
+
+ * Merged [#21](https://github.com/Olical/cljs-test-runner/pull/21) - Filter tests under :advanced.
+
 ## 3.2.0
 
  * Merged [#19](https://github.com/Olical/cljs-test-runner/pull/19) - Adds `chrome-headless` to the envs list.
