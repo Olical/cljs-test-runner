@@ -204,7 +204,9 @@
     "Runs the test suite with the give arguments without letting the process die at the end."
     [& args]
     (with-redefs [exit println]
-      (apply -main args)))
+      (println
+        (with-out-str
+          (apply -main args)))))
 
   ;; all
   (run)
