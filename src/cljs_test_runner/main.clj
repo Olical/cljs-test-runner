@@ -30,8 +30,8 @@
             (test-exclusion %))))
 
   (defn filter-vars! [ns-syms filter-fn]
-    (doseq [[ns syms] ns-syms]
-      (doseq [[name var] syms]
+    (doseq [ns-sym ns-syms]
+      (doseq [[_ var] ns-sym]
         (when (:test (meta var))
           (when (not (filter-fn var))
             (set! (.-cljs$lang$test @var) nil))))))
@@ -56,7 +56,7 @@
     "(ns cljs-test-runner.gen
        (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses)"]))"
      ns-filter-cljs
-     "(filter-vars! {" (str/join ", " (map #(str % " (ns-publics " (format-value %) ")") nses)) "}
+     "(filter-vars! [" (str/join " " (map #(str "(ns-publics " (format-value %) ")") nses)) "]
         (var-filter {:var " (format-filter var) "
                      :include " (format-filter include) "
                      :exclude " (format-filter exclude) "}))"
