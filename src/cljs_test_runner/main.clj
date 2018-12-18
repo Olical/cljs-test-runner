@@ -102,44 +102,45 @@
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
   [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose compile-opts doo-opts]}]
-  (let [test-runner-cljs (-> (find-namespaces-in-dirs dir)
-                             (->> (filter (ns-filter-fn {:ns-symbols ns-symbols
-                                                         :ns-regexs ns-regexs})))
-                             (render-test-runner-cljs {:var var
-                                                       :include include
-                                                       :exclude exclude}))
-        exit-code (atom 1)
-        gen-path (str/join "/" [out "gen"])
-        src-path (str/join "/" [gen-path "cljs_test_runner" "gen.cljs"])
-        out-path (str/join "/" [out "cljs_test_runner.gen.js"])
-        {:keys [target doo-env]} (case env
-                                   :node {:target :nodejs
-                                          :doo-env :node}
-                                   :phantom {:target :browser
-                                             :doo-env :phantom}
-                                   :chrome-headless {:target :browser
-                                                     :doo-env :chrome-headless})]
-    (io/make-parents src-path)
-    (spit src-path test-runner-cljs)
-    (try
-      (let [build-opts (merge {:output-to out-path
-                               :output-dir out
-                               :target target
-                               :main "cljs-test-runner.gen"
-                               :optimizations :none
-                               :verbose verbose}
-                              compile-opts)
-            run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
-            watch-opts (assoc build-opts :watch-fn run-tests-fn)]
+  (when-let [nses (seq (filter (ns-filter-fn {:ns-symbols ns-symbols
+                                              :ns-regexs ns-regexs})
+                               (find-namespaces-in-dirs dir)))]
+    (let [test-runner-cljs (-> nses
+                               (render-test-runner-cljs {:var var
+                                                         :include include
+                                                         :exclude exclude}))
+          exit-code (atom 1)
+          gen-path (str/join "/" [out "gen"])
+          src-path (str/join "/" [gen-path "cljs_test_runner" "gen.cljs"])
+          out-path (str/join "/" [out "cljs_test_runner.gen.js"])
+          {:keys [target doo-env]} (case env
+                                     :node {:target :nodejs
+                                            :doo-env :node}
+                                     :phantom {:target :browser
+                                               :doo-env :phantom}
+                                     :chrome-headless {:target :browser
+                                                       :doo-env :chrome-headless})]
+      (io/make-parents src-path)
+      (spit src-path test-runner-cljs)
+      (try
+        (let [build-opts (merge {:output-to out-path
+                                 :output-dir out
+                                 :target target
+                                 :main "cljs-test-runner.gen"
+                                 :optimizations :none
+                                 :verbose verbose}
+                                compile-opts)
+              run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
+              watch-opts (assoc build-opts :watch-fn run-tests-fn)]
 
-        (if (seq watch)
-          (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
-          (do (cljs/build gen-path build-opts)
-              (->> (run-tests-fn) :exit (reset! exit-code)))))
-      (catch Exception e
-        (println e))
-      (finally
-        (exit @exit-code)))))
+          (if (seq watch)
+            (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
+            (do (cljs/build gen-path build-opts)
+                (->> (run-tests-fn) :exit (reset! exit-code)))))
+        (catch Exception e
+          (println e))
+        (finally
+          (exit @exit-code))))))
 
 (defn parse-kw
   "Parse a keyword from a string, dropping the initial : if required."
