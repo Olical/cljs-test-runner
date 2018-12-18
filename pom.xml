@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>olical</groupId>
   <artifactId>cljs-test-runner</artifactId>
-  <version>3.2.1</version>
+  <version>3.3.0</version>
   <name>cljs-test-runner</name>
   <description>Run all of your ClojureScript tests with one simple command.</description>
   <url>https://github.com/Olical/cljs-test-runner</url>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.9.0</version>
+      <version>1.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>

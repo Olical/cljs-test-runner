@@ -1,5 +1,12 @@
 # cljs-test-runner changes
 
+## 3.3.0
+
+ * Merged [#23](https://github.com/Olical/cljs-test-runner/pull/23) - Avoid crash when specifying a namespace that doesn't exist.
+ * Move to Clojure 1.10.0 by default.
+ * Clean up some old code left over from a refactor around var filtering.
+ * Add a `Makefile` wrapper that can start a prepl server for development.
+
 ## 3.2.1
 
  * Merged [#21](https://github.com/Olical/cljs-test-runner/pull/21) - Filter tests under :advanced.
