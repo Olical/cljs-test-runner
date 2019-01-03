@@ -119,7 +119,8 @@
                                      :phantom {:target :browser
                                                :doo-env :phantom}
                                      :chrome-headless {:target :browser
-                                                       :doo-env :chrome-headless})]
+                                                       :doo-env :chrome-headless}
+                                     :planck {:doo-env :planck})]
       (io/make-parents src-path)
       (spit src-path test-runner-cljs)
       (try
@@ -132,11 +133,12 @@
                                 compile-opts)
               run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
               watch-opts (assoc build-opts :watch-fn run-tests-fn)]
-
-          (if (seq watch)
-            (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
-            (do (cljs/build gen-path build-opts)
-                (->> (run-tests-fn) :exit (reset! exit-code)))))
+          (if (= env :planck)
+            (->> (run-tests-fn) :exit (reset! exit-code))
+            (if (seq watch)
+              (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
+              (do (cljs/build gen-path build-opts)
+                  (->> (run-tests-fn) :exit (reset! exit-code))))))
         (catch Exception e
           (println e))
         (finally

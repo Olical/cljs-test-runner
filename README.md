@@ -103,6 +103,18 @@ clj -m cljs-test-runner.main -c ./config/advanced-compilation.edn
 
 There is a known issue with `:simple` and `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
 
+### Planck
+
+To use Planck, add `"cljs-test-runner-out/gen` to the `:paths` in your `deps.edn`:
+
+```edn
+:paths ["src" "test" "cljs-test-runner-out/gen"]
+```
+
+and set the environment:
+
+    -x planck
+
 ## Unlicenced
 
 Find the full [unlicense][] in the `UNLICENSE` file, but here's a snippet.
