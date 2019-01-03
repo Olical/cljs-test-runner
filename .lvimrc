@@ -1,0 +1,1 @@
+nnoremap <localleader>rc :call conjure#connect("default", "127.0.0.1:5005", "cljc?$", "clj")<cr>
