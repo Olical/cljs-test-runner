@@ -105,7 +105,7 @@ There is a known issue with `:simple` and `:whitespace`, I just haven't invested
 
 ### Planck
 
-To use Planck, add `"cljs-test-runner-out/gen` to the `:paths` in your `deps.edn`:
+To use Planck, add the generated test runner to the `:paths` in your `deps.edn`:
 
 ```edn
 :paths ["src" "test" "cljs-test-runner-out/gen"]
