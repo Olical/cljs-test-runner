@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.4.0
+
+ * Merged [#25](https://github.com/Olical/cljs-test-runner/pull/25) - Support for [planck](https://github.com/planck-repl/planck).
+
 ## 3.3.0
 
  * Merged [#23](https://github.com/Olical/cljs-test-runner/pull/23) - Avoid crash when specifying a namespace that doesn't exist.
