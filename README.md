@@ -61,7 +61,7 @@ $ clojure -Atest --help
   -i, --include SYMBOL                               Run only tests that have this metadata keyword.
   -e, --exclude SYMBOL                               Exclude tests with this metadata keyword.
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
-  -x, --env ENV                node                  Run your tests in either node, phantom or chrome-headless.
+  -x, --env ENV                node                  Run your tests in node, phantom, chrome-headless or planck.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
   -c, --compile-opts PATH                            EDN file containing opts to be passed to the ClojureScript compiler.
   -D, --doo-opts PATH                                EDN file containing opts to be passed to doo.
