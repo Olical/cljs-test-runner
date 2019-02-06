@@ -101,6 +101,12 @@ Now when you run the following, your tests will be executed with advanced compil
 clj -m cljs-test-runner.main -c ./config/advanced-compilation.edn
 ```
 
+You can also directly inline the EDN using the `-c` flag:
+
+```bash
+clj -m cljs-test-runner.main -c '{:optimizations :advanced}'
+```
+
 There is a known issue with `:simple` and `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
 
 ### Planck
