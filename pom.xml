@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>olical</groupId>
   <artifactId>cljs-test-runner</artifactId>
-  <version>3.4.0</version>
+  <version>3.5.0</version>
   <name>cljs-test-runner</name>
   <description>Run all of your ClojureScript tests with one simple command.</description>
   <url>https://github.com/Olical/cljs-test-runner</url>
