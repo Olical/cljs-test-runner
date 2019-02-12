@@ -93,11 +93,18 @@
   (mapcat #(find/find-namespaces-in-dir (io/file %) find/cljs) dirs))
 
 (defn load-opts
-  "Read EDN from the given path if not nil, otherwise returns an empty map."
-  [path]
-  (if path
-    (edn/read-string (slurp path))
-    {}))
+  "Load compiler options from input. Supports either an inline EDN map or assumed
+  to be a file path. If input is nil, returns empty map"
+  [path-or-data]
+  (cond
+    (nil? path-or-data)
+    {}
+
+    (= (first (str/trim path-or-data)) \{)
+    (edn/read-string path-or-data)
+
+    :else
+    (edn/read-string (slurp path-or-data))))
 
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
@@ -186,7 +193,7 @@
     :parse-fn parse-kw]
    ["-w" "--watch DIRNAME" "Directory to watch for changes (alongside the test directory). May be repeated."
     :assoc-fn accumulate]
-   ["-c" "--compile-opts PATH" "EDN file containing opts to be passed to the ClojureScript compiler."
+   ["-c" "--compile-opts PATH" "EDN opts or EDN file containing opts to be passed to the ClojureScript compiler."
     :parse-fn load-opts]
    ["-D" "--doo-opts PATH" "EDN file containing opts to be passed to doo."
     :parse-fn load-opts]
