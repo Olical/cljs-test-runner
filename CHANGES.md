@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.5.0
+
+ * Merged [#28](https://github.com/Olical/cljs-test-runner/pull/28) - Read inline EDN compiler opts.
+
 ## 3.4.0
 
  * Merged [#25](https://github.com/Olical/cljs-test-runner/pull/25) - Support for [planck](https://github.com/planck-repl/planck).
