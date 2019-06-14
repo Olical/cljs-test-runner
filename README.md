@@ -83,18 +83,6 @@ To use Closure Compiler advanced optimisation levels you will need to create an 
 {:optimizations :advanced}
 ```
 
-The Closure Compiler then requires the generated test runner to be on the path so you'll need to add this to your `:paths` key in your `deps.edn`:
-
-```edn
-:paths ["src" "test" "cljs-test-runner-out/gen"]
-```
-
-It will fail the first time you run this, that's because that directory doesn't exist yet so it'll be removed from the path on startup. To fix this you can run the following before executing your tests:
-
-```bash
-mkdir -p cljs-test-runner-out/gen
-```
-
 Now when you run the following, your tests will be executed with advanced compilation:
 
 ```bash
