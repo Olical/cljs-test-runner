@@ -6,7 +6,8 @@
             [clojure.edn :as edn]
             [clojure.tools.cli :as cli]
             [cljs.build.api :as cljs]
-            [doo.core :as doo]))
+            [doo.core :as doo])
+  (:import (clojure.lang DynamicClassLoader)))
 
 (def ns-filter-cljs
   "Namespace filtering code from cognitect-labs/test-runner but modified and as a string. Inserted into the test runner ClojureScript code when it's rendered. Forgive me performing string based meta programming."
@@ -106,6 +107,19 @@
     :else
     (edn/read-string (slurp path-or-data))))
 
+(defn add-loader-url
+  "Add url string or URL to the highest level DynamicClassLoader url set."
+  [url]
+  (let [u (if (string? url) (java.net.URL. url) url)
+        loader (loop [loader (.getContextClassLoader (Thread/currentThread))]
+                 (let [parent (.getParent loader)]
+                   (if (instance? DynamicClassLoader parent)
+                     (recur parent)
+                     loader)))]
+    (if (instance? DynamicClassLoader loader)
+      (.addURL ^DynamicClassLoader loader u)
+      (throw (IllegalAccessError. "Context classloader is not a DynamicClassLoader")))))
+
 (defn test-cljs-namespaces-in-dir
   "Execute all ClojureScript tests in a directory."
   [{:keys [env dir out watch ns-symbols ns-regexs var include exclude verbose compile-opts doo-opts]}]
@@ -130,6 +144,7 @@
                                      :planck {:doo-env :planck})]
       (io/make-parents src-path)
       (spit src-path test-runner-cljs)
+      (add-loader-url (io/as-url (io/file gen-path)))
       (try
         (let [build-opts (merge {:output-to out-path
                                  :output-dir out
@@ -203,6 +218,8 @@
 (defn -main
   "Creates a ClojureScript test runner and executes it with node (by default)."
   [& args]
+  (let [cl (.getContextClassLoader (Thread/currentThread))]
+      (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]
     (cond
       (:help options) (exit 0 summary)
