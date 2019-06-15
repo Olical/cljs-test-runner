@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.6.0
+
+ * Merged [#31](https://github.com/Olical/cljs-test-runner/pull/31) - Fix optimisation level quirks.
+
 ## 3.5.0
 
  * Merged [#28](https://github.com/Olical/cljs-test-runner/pull/28) - Read inline EDN compiler opts.
