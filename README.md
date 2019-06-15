@@ -69,13 +69,7 @@ $ clojure -Atest --help
   -H, --help
 ```
 
-## Gotchas
-
-### Paths
-
-Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
-
-### Advanced compilation
+## Advanced compilation
 
 To use Closure Compiler advanced optimisation levels you will need to create an EDN file like this:
 
@@ -96,6 +90,12 @@ clj -m cljs-test-runner.main -c '{:optimizations :advanced}'
 ```
 
 There is a known issue with `:simple` and `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
+
+## Gotchas
+
+### Paths
+
+Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
 
 ### Planck
 
