@@ -89,7 +89,7 @@ You can also directly inline the EDN using the `-c` flag:
 clj -m cljs-test-runner.main -c '{:optimizations :advanced}'
 ```
 
-There is a known issue with `:simple` and `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
+There is a known issue with `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none`, `:simple` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
 
 ## Gotchas
 
