@@ -21,8 +21,8 @@ It's likely that your tests will require dependencies and configuration that wou
 I recommend you put this under an alias such as `test` or `cljs-test` if that's already taken by your Clojure tests.
 
 ```clojure
-{:deps {org.clojure/clojure {:mvn/version "1.9.0"}
-        org.clojure/clojurescript {:mvn/version "1.10.145"}}
+{:deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        org.clojure/clojurescript {:mvn/version "1.10.520"}}
  :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.6.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
