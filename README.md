@@ -61,7 +61,7 @@ $ clojure -Atest --help
   -i, --include SYMBOL                               Run only tests that have this metadata keyword.
   -e, --exclude SYMBOL                               Exclude tests with this metadata keyword.
   -o, --out DIRNAME            cljs-test-runner-out  The output directory for compiled test code
-  -x, --env ENV                node                  Run your tests in node, phantom, chrome-headless or planck.
+  -x, --env ENV                node                  Run your tests in node, phantom, chrome-headless, lumo or planck.
   -w, --watch DIRNAME                                Directory to watch for changes (alongside the test directory). May be repeated.
   -c, --compile-opts PATH                            EDN file containing opts to be passed to the ClojureScript compiler.
   -D, --doo-opts PATH                                EDN file containing opts to be passed to doo.
@@ -97,15 +97,19 @@ There is a known issue with `:whitespace`, I just haven't invested the time into
 
 Make sure the directory (or directories!) containing your tests are on your Java class path. Specify this with a top level `:paths` key in your `deps.edn` file.
 
-### Planck
+### Lumo / Planck
 
-To use Planck, add the generated test runner to the `:paths` in your `deps.edn`:
+To use Lumo or Planck, add the generated test runner to the `:paths` in your `deps.edn`:
 
 ```edn
 :paths ["src" "test" "cljs-test-runner-out/gen"]
 ```
 
 and set the environment:
+
+    -x lumo
+
+or
 
     -x planck
 
