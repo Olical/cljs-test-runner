@@ -141,6 +141,7 @@
                                                :doo-env :phantom}
                                      :chrome-headless {:target :browser
                                                        :doo-env :chrome-headless}
+                                     :lumo {:doo-env :lumo}
                                      :planck {:doo-env :planck})]
       (io/make-parents src-path)
       (spit src-path test-runner-cljs)
@@ -155,7 +156,7 @@
                                 compile-opts)
               run-tests-fn #(doo/run-script doo-env build-opts doo-opts)
               watch-opts (assoc build-opts :watch-fn run-tests-fn)]
-          (if (= env :planck)
+          (if (contains? #{:lumo :planck} env)
             (->> (run-tests-fn) :exit (reset! exit-code))
             (if (seq watch)
               (cljs/watch (apply cljs/inputs (into watch (cons gen-path dir))) watch-opts)
@@ -202,7 +203,7 @@
     :assoc-fn accumulate]
    ["-o" "--out DIRNAME" "The output directory for compiled test code"
     :default "cljs-test-runner-out"]
-   ["-x" "--env ENV" "Run your tests in node, phantom, chrome-headless or planck."
+   ["-x" "--env ENV" "Run your tests in node, phantom, chrome-headless, lumo or planck."
     :default :node
     :default-desc "node"
     :parse-fn parse-kw]
