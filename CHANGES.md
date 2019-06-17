@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.7.0
+
+ * Merged [#32](https://github.com/Olical/cljs-test-runner/pull/32) - Add support for Lumo.
+
 ## 3.6.0
 
  * Merged [#31](https://github.com/Olical/cljs-test-runner/pull/31) - Fix optimisation level quirks.
