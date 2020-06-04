@@ -1,6 +1,6 @@
 {:deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        org.clojure/clojurescript {:mvn/version "1.10.520"}
-        org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
-        org.clojure/tools.cli {:mvn/version "0.4.1"}
+        org.clojure/clojurescript {:mvn/version "1.10.764"}
+        org.clojure/tools.namespace {:mvn/version "1.0.0"}
+        org.clojure/tools.cli {:mvn/version "1.0.194"}
         ingesolvoll/doo {:mvn/version "0.2.0"}}
  :aliases {:dev {:extra-paths ["test" "other-tests" "cljs-test-runner-out/gen"]}}}
