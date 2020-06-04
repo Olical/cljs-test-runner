@@ -1,5 +1,9 @@
 # cljs-test-runner changes
 
+## 3.8.0
+
+ * Switch to a doo fork ([#36](https://github.com/Olical/cljs-test-runner/issues/36)) to support `:target :bundle`.
+
 ## 3.7.0
 
  * Merged [#32](https://github.com/Olical/cljs-test-runner/pull/32) - Add support for Lumo.
