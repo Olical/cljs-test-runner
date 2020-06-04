@@ -4,14 +4,14 @@ Run all of your [ClojureScript][] tests with one simple command.
 
 Inspired by Cognitect's [test-runner][] for [Clojure][], it is designed to be used in conjunction with the Clojure CLI tool and a `deps.edn` file.
 
-Under the hood it's building a test runner file, compiling everything and then executing the compiled tests with [doo][]. Discovery of test namespaces is automatic, so no configuration is required.
+Under the hood it's building a test runner file, compiling everything and then executing the compiled tests with [doo][] (using [ingesolvoll's fork][doo-fork]). Discovery of test namespaces is automatic, so no configuration is required.
 
 ## Usage
 
 In simple cases, you'll be able to execute your tests with something as succinct as the following line.
 
 ```bash
-$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.7.0"}}}' -m cljs-test-runner.main
+$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}}' -m cljs-test-runner.main
 ```
 
 > Note: The generated test code is placed in the directory `cljs-test-runner-out` by default (configure with `--out`), you should add that to your `.gitignore` file.
@@ -23,7 +23,7 @@ I recommend you put this under an alias such as `test` or `cljs-test` if that's 
 ```clojure
 {:deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/clojurescript {:mvn/version "1.10.520"}}
- :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.7.0"}}
+ :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 
@@ -127,6 +127,7 @@ Do what you want. Learn as much as you can. Unlicense more software.
 [clojurescript]: https://clojurescript.org/
 [test-runner]: https://github.com/cognitect-labs/test-runner
 [doo]: https://github.com/bensu/doo
+[doo-fork]: https://github.com/ingesolvoll/doo
 [node]: https://nodejs.org
 [phantom]: http://phantomjs.org/
 [jsdom]: https://github.com/jsdom/jsdom
