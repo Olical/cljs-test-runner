@@ -91,6 +91,15 @@ clj -m cljs-test-runner.main -c '{:optimizations :advanced}'
 
 There is a known issue with `:whitespace`, I just haven't invested the time into working out what it is. For now, stick to `:none`, `:simple` or `:advanced`, the original issue for optimisation levels breaking things is [#16][].
 
+## Bundle target
+The new [bundle][] target requires a 2-step process for compilation. One for building an `index.js` consumable by bundlers like webpack, and a second step for actually running the bundler. This requires you to specify 2 different targets.
+
+In essence, this requires you to include the following in your `doo.edn`:
+
+`{:output-to "resources/public/js/main.js"}`
+
+Your CLJS compiler options should be according to the standard guide.
+
 ## Gotchas
 
 ### Paths
@@ -132,3 +141,4 @@ Do what you want. Learn as much as you can. Unlicense more software.
 [jsdom]: https://github.com/jsdom/jsdom
 [unlicense]: http://unlicense.org/
 [#16]: https://github.com/Olical/cljs-test-runner/issues/16
+[bundle]: https://clojurescript.org/guides/webpack
