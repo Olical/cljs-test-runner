@@ -141,6 +141,8 @@
                                                :doo-env :phantom}
                                      :chrome-headless {:target :browser
                                                        :doo-env :chrome-headless}
+                                     :firefox-headless {:target :browser
+                                                        :doo-env :firefox-headless}
                                      :lumo {:doo-env :lumo}
                                      :planck {:doo-env :planck})]
       (io/make-parents src-path)
