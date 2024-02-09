@@ -2,5 +2,5 @@
         org.clojure/clojurescript {:mvn/version "1.10.773"}
         org.clojure/tools.namespace {:mvn/version "1.0.0"}
         org.clojure/tools.cli {:mvn/version "1.0.194"}
-        ingesolvoll/doo {:mvn/version "0.2.0"}}
+        ingesolvoll/doo {:mvn/version "0.2.1"}}
  :aliases {:dev {:extra-paths ["test" "other-tests" "cljs-test-runner-out/gen"]}}}
