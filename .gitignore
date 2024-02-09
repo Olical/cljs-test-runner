@@ -2,3 +2,4 @@
 target/
 cljs-test-runner-out/
 .nrepl-port
+.clj-kondo/
