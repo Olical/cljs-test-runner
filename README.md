@@ -17,7 +17,7 @@ In simple cases, you'll be able to execute your tests with something as succinct
 as the following line.
 
 ```bash
-$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}}' -m cljs-test-runner.main
+$ clojure -Sdeps '{:deps {olical/cljs-test-runner {:mvn/version "3.8.1"}}}' -m cljs-test-runner.main
 ```
 
 > Note: The generated test code is placed in the directory
@@ -34,7 +34,7 @@ already taken by your Clojure tests.
 ```clojure
 {:deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/clojurescript {:mvn/version "1.10.520"}}
- :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}
+ :aliases {:test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.1"}}
                   :main-opts ["-m" "cljs-test-runner.main"]}}}
 ```
 
