@@ -20,27 +20,27 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.11.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>1.0.194</version>
+      <version>1.0.219</version>
     </dependency>
     <dependency>
       <groupId>ingesolvoll</groupId>
       <artifactId>doo</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojurescript</artifactId>
-      <version>1.10.773</version>
+      <version>1.11.132</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.namespace</artifactId>
-      <version>1.0.0</version>
+      <version>1.4.5</version>
     </dependency>
   </dependencies>
   <build>
