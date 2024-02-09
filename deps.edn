@@ -3,4 +3,11 @@
         org.clojure/tools.namespace {:mvn/version "1.0.0"}
         org.clojure/tools.cli {:mvn/version "1.0.194"}
         ingesolvoll/doo {:mvn/version "0.2.1"}}
- :aliases {:dev {:extra-paths ["test" "other-tests" "cljs-test-runner-out/gen"]}}}
+ :aliases {:dev {:extra-paths ["test" "other-tests" "cljs-test-runner-out/gen"]}
+           :repl {:extra-deps {cider/cider-nrepl {:mvn/version "0.30.0"}
+                               djblue/portal {:mvn/version "0.35.1"}
+                               com.bhauman/rebel-readline {:mvn/version "0.1.4"}}}
+           :outdated {:deps {com.github.liquidz/antq {:mvn/version "2.2.999"}}
+                      :main-opts ["-m" "antq.core"]}
+           :format {:deps {cljfmt/cljfmt {:mvn/version "0.9.2"}}
+                    :main-opts ["-m" "cljfmt.main" "fix"]}}}
