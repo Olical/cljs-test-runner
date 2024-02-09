@@ -54,15 +54,15 @@
   "Renders a ClojureScript test runner from a seq of namespaces."
   [nses {:keys [var include exclude]}]
   (str
-    "(ns cljs-test-runner.gen
-       (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses)"]))"
-     ns-filter-cljs
-     "(filter-vars! [" (str/join " " (map #(str "(ns-publics " (format-value %) ")") nses)) "]
+   "(ns cljs-test-runner.gen
+       (:require [doo.runner :refer-macros [doo-tests]] [" (str/join "] [" nses) "]))"
+   ns-filter-cljs
+   "(filter-vars! [" (str/join " " (map #(str "(ns-publics " (format-value %) ")") nses)) "]
         (var-filter {:var " (format-filter var) "
                      :include " (format-filter include) "
                      :exclude " (format-filter exclude) "}))"
-     "\n"
-     "(doo-tests " (str/join " " (map format-value nses)) ")"))
+   "\n"
+   "(doo-tests " (str/join " " (map format-value nses)) ")"))
 
 (defn ns-filter-fn
   "Given possible namespace symbols and regexs, return a function that returns true if it's given namespace matches one of the rules."
@@ -222,7 +222,7 @@
   "Creates a ClojureScript test runner and executes it with node (by default)."
   [& args]
   (let [cl (.getContextClassLoader (Thread/currentThread))]
-      (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
+    (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
   (let [{:keys [options errors summary]} (cli/parse-opts args cli-options)]
     (cond
       (:help options) (exit 0 summary)
@@ -235,8 +235,8 @@
     [& args]
     (with-redefs [exit println]
       (println
-        (with-out-str
-          (apply -main args)))))
+       (with-out-str
+         (apply -main args)))))
 
   ;; all
   (run)
